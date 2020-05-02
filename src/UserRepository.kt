@@ -6,9 +6,8 @@ import com.ktor.stock.market.game.jbosak.model.Users
 import io.ktor.auth.UserPasswordCredential
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import kotlin.collections.ArrayList
 
-class UserRepository {
+object UserRepository {
     fun getAll(): ArrayList<User> {
         val users: ArrayList<User> = arrayListOf()
         transaction {
