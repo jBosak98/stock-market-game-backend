@@ -17,6 +17,10 @@ fun Authentication.Configuration.setup(){
                 .getClaim("id")
                 .asInt()
                 ?.let(UserRepository::findUserById)
+                ?.let {user ->
+                    val token = JwtConfig.makeToken(user)
+                    user.copy(token = token)
+                }
 
             if (user === null) null
             else JWTPrincipal(it.payload)

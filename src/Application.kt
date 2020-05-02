@@ -7,6 +7,8 @@ import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.features.CORS
 import io.ktor.features.ContentNegotiation
+import io.ktor.features.DefaultHeaders
+import io.ktor.features.ForwardedHeaderSupport
 import io.ktor.gson.gson
 import io.ktor.routing.Routing
 
@@ -21,6 +23,9 @@ fun Application.module(testing: Boolean = false) {
 
     install(CORS) { setup() }
 
+    install(DefaultHeaders)
+
+    install(ForwardedHeaderSupport)
     install(Authentication) { setup() }
 
     install(ContentNegotiation) { gson() }

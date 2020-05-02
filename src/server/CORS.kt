@@ -10,7 +10,24 @@ fun CORS.Configuration.setup(){
     method(HttpMethod.Delete)
     method(HttpMethod.Patch)
     header(HttpHeaders.Authorization)
-    header("MyCustomHeader")
+    method(HttpMethod.Options)
+    header(HttpHeaders.XForwardedProto)
+    HttpHeaders.Accept
+    allowSameOrigin
+    method(HttpMethod.Options)
+    method(HttpMethod.Get)
+    header("")
+    method(HttpMethod.Post)
+    method(HttpMethod.Put)
+    method(HttpMethod.Delete)
+    method(HttpMethod.Patch)
+    header(HttpHeaders.AccessControlAllowHeaders)
+    header(HttpHeaders.ContentType)
+    header(HttpHeaders.AccessControlAllowOrigin)
+    allowCredentials = true
+    anyHost()
+    header(HttpHeaders.Accept)
+//    header("MyCustomHeader")
     allowCredentials = true
     anyHost()
 }
