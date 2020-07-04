@@ -1,15 +1,13 @@
 package com.ktor.stock.market.game.jbosak.model
 
-import java.security.Principal
+import io.ktor.auth.Principal
 
 data class User (
     val id:Int,
     val email:String,
     val password:String,
     val token: String
-): Principal {
-    override fun getName(): String = email
-}
+) : Principal
 
 fun User.toUserDTO()
     = UserDTO(
