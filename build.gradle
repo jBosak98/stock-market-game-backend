@@ -26,6 +26,9 @@ repositories {
     mavenLocal()
     jcenter()
     maven { url 'https://kotlin.bintray.com/ktor' }
+    flatDir {
+        dirs 'lib'
+    }
 }
 
 dependencies {
@@ -47,4 +50,5 @@ dependencies {
     compile group: "org.mindrot", name: "jbcrypt", version: "0.4"
     compile 'org.jetbrains.exposed:exposed:0.17.6'
 
+    compile fileTree(include: ['*.jar'], dir: 'lib')
 }
