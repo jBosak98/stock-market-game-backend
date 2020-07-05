@@ -1,9 +1,9 @@
 package com.ktor.stock.market.game.jbosak.route
 
+import arrow.core.valueOr
 import com.ktor.stock.market.game.jbosak.UserRepository
 import com.ktor.stock.market.game.jbosak.model.CredentialWrapper
 import com.ktor.stock.market.game.jbosak.model.RegistrationWrapper
-import com.ktor.stock.market.game.jbosak.model.toUserDTO
 import com.ktor.stock.market.game.jbosak.service.AuthService
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
@@ -20,7 +20,7 @@ fun Route.authRoute() {
             val credential = call.receive<CredentialWrapper>().user
             val user = AuthService.login(credential)
 
-            call.respond(HttpStatusCode.Created, user.toUserDTO())
+            call.respond(HttpStatusCode.Created, user.valueOr { throw it })
         }
         post("/register") {
             val details = call.receive<RegistrationWrapper>().user

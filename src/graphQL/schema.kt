@@ -12,6 +12,7 @@ fun getSchema(): GraphQLSchema {
             ${getUserSchema()}
             type Query {
                 me: User
+                login(user:UserLoginInput!): User
             }
     
             type Mutation {
