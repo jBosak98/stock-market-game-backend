@@ -29,10 +29,9 @@ fun TypeRuntimeWiring.Builder.userMutationResolvers() =
     this.dataFetcher("register") { env ->
         val user = convertToObject(env.arguments, RegistrationWrapper::class.java)!!.user
         if(UserRepository.doesUserExist(user.email))
-            throw Exception("user exists")//TODO: make graphQL exception
+            throw ClientGraphQLException("user exists")
 
         AuthService.register(user)
-
     }
 
 fun TypeRuntimeWiring.Builder.userQueryResolvers() =

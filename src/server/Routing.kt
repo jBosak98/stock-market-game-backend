@@ -1,6 +1,7 @@
 package com.ktor.stock.market.game.jbosak.server
 
 
+import com.ktor.stock.market.game.jbosak.graphQL.formatErrorGraphQLError
 import com.ktor.stock.market.game.jbosak.graphQL.getSchema
 import com.ktor.stock.market.game.jbosak.model.Context
 import com.ktor.stock.market.game.jbosak.model.User
@@ -30,6 +31,7 @@ fun Routing.setup(){
             config {
                 context = getContext(call)
                 graphiql = true
+                formatError = formatErrorGraphQLError
             }
         }
     }
