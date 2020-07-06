@@ -1,6 +1,7 @@
 package com.ktor.stock.market.game.jbosak.server
 
-import com.ktor.stock.market.game.jbosak.model.Users
+import com.ktor.stock.market.game.jbosak.model.db.Companies
+import com.ktor.stock.market.game.jbosak.model.db.Users
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.jetbrains.exposed.sql.Database
@@ -14,5 +15,6 @@ fun initDB() {
     Database.connect(ds)
     transaction {
         SchemaUtils.create(Users)
+        SchemaUtils.create(Companies)
     }
 }

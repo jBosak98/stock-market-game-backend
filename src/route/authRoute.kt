@@ -1,7 +1,7 @@
 package com.ktor.stock.market.game.jbosak.route
 
 import arrow.core.valueOr
-import com.ktor.stock.market.game.jbosak.UserRepository
+import com.ktor.stock.market.game.jbosak.repository.UserRepository
 import com.ktor.stock.market.game.jbosak.model.CredentialWrapper
 import com.ktor.stock.market.game.jbosak.model.RegistrationWrapper
 import com.ktor.stock.market.game.jbosak.service.AuthService

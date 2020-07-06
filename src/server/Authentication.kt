@@ -1,7 +1,7 @@
 package com.ktor.stock.market.game.jbosak.server
 
 import com.ktor.stock.market.game.jbosak.JwtConfig
-import com.ktor.stock.market.game.jbosak.UserRepository
+import com.ktor.stock.market.game.jbosak.repository.UserRepository
 import io.ktor.auth.Authentication
 import io.ktor.auth.jwt.jwt
 
