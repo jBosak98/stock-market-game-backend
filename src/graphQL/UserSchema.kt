@@ -1,19 +1,15 @@
 package com.ktor.stock.market.game.jbosak.graphQL
 
 import arrow.core.valueOr
-import com.google.gson.Gson
-import com.ktor.stock.market.game.jbosak.UserRepository
+import com.ktor.stock.market.game.jbosak.repository.UserRepository
 import com.ktor.stock.market.game.jbosak.model.Context
 import com.ktor.stock.market.game.jbosak.model.CredentialWrapper
 import com.ktor.stock.market.game.jbosak.model.RegistrationWrapper
 import com.ktor.stock.market.game.jbosak.service.AuthService
+import com.ktor.stock.market.game.jbosak.utils.convertToObject
 import graphql.schema.idl.TypeRuntimeWiring
 
-fun <T> convertToObject(args:Map<String, Any>, type:Class<T>): T? {
-    val gson = Gson()
-    val jsonTree = gson.toJsonTree(args)
-    return gson.fromJson(jsonTree, type)
-}
+
 fun getUserSchema() =
     """
         type User {

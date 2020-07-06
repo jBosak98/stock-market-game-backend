@@ -10,9 +10,12 @@ fun getSchema(): GraphQLSchema {
     val schemaDef = SchemaParser().parse(
         """
             ${getUserSchema()}
+            ${getCompanySchema()}
+            
             type Query {
                 me: User
                 login(user:UserLoginInput!): User
+                companiesConnection(skip:Int, limit:Int):CompaniesConnection
             }
     
             type Mutation {
@@ -29,6 +32,7 @@ fun getSchema(): GraphQLSchema {
         .type("Query") { builder ->
             builder
                 .userQueryResolvers()
+                .companyQueryResolvers()
         }
         .type("Mutation") { builder ->
             builder
