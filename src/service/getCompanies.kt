@@ -1,7 +1,5 @@
 package com.ktor.stock.market.game.jbosak.service
 
-import arrow.core.extensions.list.alternative.orElse
-import arrow.syntax.collections.collect
 import com.ktor.stock.market.game.jbosak.model.Company
 import com.ktor.stock.market.game.jbosak.repository.CompanyRepository
 import org.threeten.bp.LocalDate
