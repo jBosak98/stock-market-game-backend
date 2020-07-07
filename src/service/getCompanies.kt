@@ -8,7 +8,8 @@ import org.threeten.bp.LocalDate
 
 fun getCompanies(skip:Int, limit:Int): List<Company> {
     val dbCompanies = CompanyRepository.findCompanies(skip, limit)
-    return dbCompanies.orElse(refetch(skip, limit) )
+    return  if(dbCompanies.isNotEmpty()) dbCompanies
+            else refetch(skip, limit)
 }
 
 private fun refetch(skip:Int, limit:Int): List<Company> {
