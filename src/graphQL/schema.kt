@@ -11,11 +11,14 @@ fun getSchema(): GraphQLSchema {
         """
             ${getUserSchema()}
             ${getCompanySchema()}
+            ${getStockPriceSchema()}
             
             type Query {
                 me: User
                 login(user:UserLoginInput!): User
                 companiesConnection(skip:Int, limit:Int):CompaniesConnection
+                getPrices(ticker:String!):[StockPrice]!
+
             }
     
             type Mutation {
@@ -33,10 +36,12 @@ fun getSchema(): GraphQLSchema {
             builder
                 .userQueryResolvers()
                 .companyQueryResolvers()
+                .stockPriceQueryResolvers()
         }
         .type("Mutation") { builder ->
             builder
                 .userMutationResolvers()
+                .stockPriceMutationResolvers()
         }
         .build()
     return SchemaGenerator()
