@@ -1,7 +1,6 @@
 package service
 
 import com.ktor.stock.market.game.jbosak.server.initExternalApi
-import com.ktor.stock.market.game.jbosak.service.fetchCompanies
 import com.ktor.stock.market.game.jbosak.service.fetchSecurityStockPrices
 import junit.framework.Assert.assertTrue
 import org.junit.Before
@@ -30,11 +29,5 @@ internal class FetchSecurityStockPricesKtTest {
         assertTrue(true)
     }
 
-    @Test
-    fun fetchCompaniesTest() {
-        val response = fetchCompanies(
-                LocalDate.of(2019,7,1)
-        )
-        println(response)
-    }
+
 }
