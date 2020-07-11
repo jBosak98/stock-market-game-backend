@@ -3,7 +3,7 @@ package com.ktor.stock.market.game.jbosak.repository
 import com.intrinio.models.CompanySummary
 import com.ktor.stock.market.game.jbosak.model.db.Companies
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.statements.DeleteStatement.Companion.where
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.statements.InsertStatement
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -26,11 +26,12 @@ object CompanyRepository {
         }
     }
 
-    fun findCompany(id:Int? = null, externalId:String? = null) = transaction {
+    fun findCompany(id:Int? = null, externalId:String? = null, ticker: String? = null) = transaction {
         val comparator: SqlExpressionBuilder.()-> Op<Boolean> =
             when {
                 id != null -> {{ Companies.id eq id }}
                 externalId != null -> {{ Companies.externalId eq externalId }}
+                ticker != null -> {{ Companies.ticker eq ticker }}
                 else -> return@transaction null
             }
         Companies
@@ -48,6 +49,14 @@ object CompanyRepository {
             .map(ResultRow::toCompany)
     }
 
+
+    fun <T,V> twoOptionsComparator(opt1:T?,column1:Column<T>, opt2:V?, column2:Column<V>)
+            : (() -> Op<Boolean>)? =
+        when {
+            opt1 != null -> {{ column1 eq opt1 }}
+            opt2 != null -> {{ column2 eq opt2 }}
+            else -> null
+        }
 
 
 }
