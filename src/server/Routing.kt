@@ -2,12 +2,15 @@ package com.ktor.stock.market.game.jbosak.server
 
 
 import com.ktor.stock.market.game.jbosak.graphQL.formatErrorGraphQLError
+import com.ktor.stock.market.game.jbosak.graphQL.generateDataLoaders
 import com.ktor.stock.market.game.jbosak.graphQL.getSchema
 import com.ktor.stock.market.game.jbosak.model.Context
 import com.ktor.stock.market.game.jbosak.model.User
 import com.ktor.stock.market.game.jbosak.route.authRoute
 import graphql.ExecutionInput
 import graphql.GraphQL
+import graphql.execution.AsyncExecutionStrategy
+import graphql.execution.AsyncSerialExecutionStrategy
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.auth.authenticate
@@ -18,7 +21,6 @@ import io.ktor.routing.Routing
 import io.ktor.routing.get
 import ktor.graphql.Config
 import ktor.graphql.fromRequest
-//import ktor.graphql.config
 import ktor.graphql.graphQL
 
 fun Routing.setup(){
@@ -31,8 +33,13 @@ fun Routing.setup(){
         get("/hello") {
             call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
         }
-        val graphql = GraphQL.newGraphQL(getSchema()).build()
-        graphQL("/graphql", getSchema()) {request ->
+        val graphql = GraphQL
+            .newGraphQL(getSchema())
+            .queryExecutionStrategy(AsyncExecutionStrategy())
+            .mutationExecutionStrategy(AsyncSerialExecutionStrategy())
+            .build()
+
+        graphQL("/graphql", getSchema()) { request ->
             Config(
                 formatError = formatErrorGraphQLError,
                 showExplorer = true,
@@ -40,16 +47,12 @@ fun Routing.setup(){
                     val input = ExecutionInput
                         .newExecutionInput()
                         .fromRequest(request)
+                        .dataLoaderRegistry(generateDataLoaders())
                         .context(getContext(call))
                     graphql.execute(input)
                 }
-//                executeRequest = getContext(call)
             )
-//            config {
-//                context = getContext(call)
-//                graphiql = true
-//                formatError = formatErrorGraphQLError
-//            }
+
         }
     }
 }
