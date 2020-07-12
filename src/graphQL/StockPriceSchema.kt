@@ -1,8 +1,10 @@
 package com.ktor.stock.market.game.jbosak.graphQL
 
+import com.ktor.stock.market.game.jbosak.model.StockPrice
 import com.ktor.stock.market.game.jbosak.service.getRealTimeSecurityPrice
 import graphql.schema.AsyncDataFetcher.async
 import graphql.schema.idl.TypeRuntimeWiring
+import java.util.concurrent.CompletableFuture
 
 fun getStockPriceSchema() =
     """
@@ -38,24 +40,25 @@ fun TypeRuntimeWiring.Builder.stockPriceQueryResolvers(): TypeRuntimeWiring.Buil
             val resolvedDataLoaders = dataloaderResolver(env)
             val response = getRealTimeSecurityPrice(ticker)
             listOf(response).map { stockPrice ->
-                object {
-                    val id = stockPrice!!.id
-                    val updatedOn = stockPrice!!.updatedOn
-                    val lastPrice = stockPrice!!.lastPrice
-                    val lastTime = stockPrice!!.lastTime
-                    val bidPrice = stockPrice!!.bidPrice
-                    val askPrice = stockPrice!!.askPrice
-                    val askSize = stockPrice!!.askSize
-                    val openPrice = stockPrice!!.openPrice
-                    val highPrice = stockPrice!!.highPrice
-                    val lowPrice = stockPrice!!.lowPrice
-                    val exchangeVolume = stockPrice!!.exchangeVolume
-                    val marketVolume = stockPrice!!.marketVolume
-                    val dataSource = stockPrice!!.dataSource
-                    val securityExternalId = stockPrice!!.securityExternalId
-                    val securityTicker = stockPrice!!.securityTicker
-                    val company = resolvedDataLoaders["company"]?.load(ticker)
-                }
+                toGraphQLStockPrice(stockPrice, resolvedDataLoaders["company"]?.load(ticker))
             }
         })
 
+private fun toGraphQLStockPrice(stockPrice: StockPrice?, company: CompletableFuture<Any>?) = object {
+    val id = stockPrice!!.id
+    val updatedOn = stockPrice!!.updatedOn
+    val lastPrice = stockPrice!!.lastPrice
+    val lastTime = stockPrice!!.lastTime
+    val bidPrice = stockPrice!!.bidPrice
+    val askPrice = stockPrice!!.askPrice
+    val askSize = stockPrice!!.askSize
+    val openPrice = stockPrice!!.openPrice
+    val highPrice = stockPrice!!.highPrice
+    val lowPrice = stockPrice!!.lowPrice
+    val exchangeVolume = stockPrice!!.exchangeVolume
+    val marketVolume = stockPrice!!.marketVolume
+    val dataSource = stockPrice!!.dataSource
+    val securityExternalId = stockPrice!!.securityExternalId
+    val securityTicker = stockPrice!!.securityTicker
+    val company = company
+}
