@@ -1,4 +1,4 @@
-package com.ktor.stock.market.game.jbosak.model
+package com.ktor.stock.market.game.jbosak.model.db
 
 import org.jetbrains.exposed.sql.Table
 

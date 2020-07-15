@@ -1,6 +1,7 @@
 package com.ktor.stock.market.game.jbosak
 
 import com.ktor.stock.market.game.jbosak.server.initDB
+import com.ktor.stock.market.game.jbosak.server.initExternalApi
 import com.ktor.stock.market.game.jbosak.server.setup
 import io.ktor.application.Application
 import io.ktor.application.install
@@ -20,6 +21,7 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 fun Application.module(testing: Boolean = false) {
 
     initDB()
+    initExternalApi()
 
     install(CORS) { setup() }
 

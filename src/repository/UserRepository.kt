@@ -1,9 +1,8 @@
-package com.ktor.stock.market.game.jbosak
+package com.ktor.stock.market.game.jbosak.repository
 
 import com.ktor.stock.market.game.jbosak.model.RegistrationDetails
 import com.ktor.stock.market.game.jbosak.model.UserDTO
-import com.ktor.stock.market.game.jbosak.model.Users
-import com.ktor.stock.market.game.jbosak.repository.toUser
+import com.ktor.stock.market.game.jbosak.model.db.Users
 import io.ktor.auth.UserPasswordCredential
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction

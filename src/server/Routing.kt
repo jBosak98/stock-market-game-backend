@@ -1,44 +1,62 @@
 package com.ktor.stock.market.game.jbosak.server
 
+
+import com.ktor.stock.market.game.jbosak.graphQL.formatErrorGraphQLError
+import com.ktor.stock.market.game.jbosak.graphQL.generateDataLoaders
+import com.ktor.stock.market.game.jbosak.graphQL.getSchema
+import com.ktor.stock.market.game.jbosak.model.Context
+import com.ktor.stock.market.game.jbosak.model.User
 import com.ktor.stock.market.game.jbosak.route.authRoute
+import graphql.ExecutionInput
+import graphql.GraphQL
+import graphql.execution.AsyncExecutionStrategy
+import graphql.execution.AsyncSerialExecutionStrategy
+import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.auth.authenticate
+import io.ktor.auth.authentication
 import io.ktor.http.ContentType
 import io.ktor.response.respondText
 import io.ktor.routing.Routing
 import io.ktor.routing.get
+import ktor.graphql.Config
+import ktor.graphql.fromRequest
+import ktor.graphql.graphQL
 
 fun Routing.setup(){
     authRoute()
-    authenticate {
+    authenticate(optional = true) {
         get("/") {
             call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
         }
+
+        get("/hello") {
+            call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
+        }
+        val graphql = GraphQL
+            .newGraphQL(getSchema())
+            .queryExecutionStrategy(AsyncExecutionStrategy())
+            .mutationExecutionStrategy(AsyncSerialExecutionStrategy())
+            .build()
+
+        graphQL("/graphql", getSchema()) { request ->
+            Config(
+                formatError = formatErrorGraphQLError,
+                showExplorer = true,
+                executeRequest = {
+                    val input = ExecutionInput
+                        .newExecutionInput()
+                        .fromRequest(request)
+                        .dataLoaderRegistry(generateDataLoaders())
+                        .context(getContext(call))
+                    graphql.execute(input)
+                }
+            )
+
+        }
     }
-    //        get("/json/jackson") {
-//            call.respond(mapOf("hello" to "world"))
-//        }
-//
-//        get("/users") {
-//            call.respond(userController.getAll())
-//        }
-//
-//        post("/users") {
-//            val userDto = call.receive<UserDTO>()
-//            userController.insert(userDto)
-//            call.respond(HttpStatusCode.Created)
-//        }
-//
-//        put("/users/{id}") {
-//            val id: Int = call.parameters["id"] as Int
-//            val userDTO = call.receive<UserDTO>()
-//            userController.update(userDTO, id)
-//            call.respond(HttpStatusCode.OK)
-//        }
-//
-//        delete("/users/{id}") {
-//            val id: Int = call.parameters["id"] as Int
-//            userController.delete(id)
-//            call.respond(HttpStatusCode.OK)
-//        }
 }
+
+fun getContext(call: ApplicationCall): Context
+        = Context(call.authentication.principal as User?)
+
