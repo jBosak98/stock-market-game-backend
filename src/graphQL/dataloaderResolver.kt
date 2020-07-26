@@ -7,37 +7,42 @@ import graphql.schema.DataFetchingEnvironment
 import org.dataloader.DataLoader
 
 data class DataLoaderKey<T>(
-    val key:T,
-    val selectedFields:List<String>,
-    val env:DataFetchingEnvironment
+    val key: T,
+    val selectedFields: List<String>,
+    val env: DataFetchingEnvironment,
+    val resolver: Lazy<Map<String, Pair<DataLoader<Any, Any>, (String?) -> DataLoaderKey<String?>>>>
 )
 
 fun dataloaderResolver(
     env: DataFetchingEnvironment,
-    selectedField:List<String>? = null
-): Map<String, DataLoader<Any, Any>> {
+    selectedField: List<String>? = null
+): Map<String, Pair<DataLoader<Any, Any>, (String?) -> DataLoaderKey<String?>>> {
     val allSelectedField = selectedField
         .toOption()
-        .getOrElse {
-            env
-                .selectionSet
-                .get()
-                .keySet()
-                .filterNotNull()
-        }
+        .getOrElse { env.selectionSet.get().keySet().filterNotNull() }
 
-   return allSelectedField
+    val splitBySlash = { value: String -> value.split("/") }
+
+    return allSelectedField
         .map { keyPath ->
-            val key = keyPath.split("/").last()
+            val key = splitBySlash(keyPath).last()
+            val filterByKey = { selected: List<String> -> selected.contains(key) }
+            val extractDataLoaderKeys = { field: List<String> ->
+                field.pipe { it.subList(it.indexOf(key) + 1, it.size).joinToString("/") }
+            }
             val keySelectedField = allSelectedField
-                .map {field -> field.split("/") }
-                .filter { selected -> selected.contains(key) }
-                .map { field ->
-                    field.pipe {
-                        it.subList(it.indexOf(key) + 1, it.size).joinToString("/")
-                    }
-                }
-            key to env.getDataLoader<Any, Any>(key)
+                .map(splitBySlash)
+                .filter(filterByKey)
+                .map(extractDataLoaderKeys)
+            val getResolver
+                    = lazy { dataloaderResolver(env, keySelectedField) }
+
+            key to Pair(
+                env.getDataLoader<Any, Any>(key),
+                { arg: String? -> DataLoaderKey(arg, keySelectedField, env,getResolver) }
+            )
         }
         .toMap()
 }
+
+

@@ -1,7 +1,5 @@
 package com.ktor.stock.market.game.jbosak.graphQL
 
-import arrow.core.getOrElse
-import arrow.core.toOption
 import arrow.syntax.function.pipe
 import com.ktor.stock.market.game.jbosak.model.ConnectionArguments
 import com.ktor.stock.market.game.jbosak.repository.CompanyRepository.companiesSize
@@ -9,7 +7,6 @@ import com.ktor.stock.market.game.jbosak.service.getCompanies
 import com.ktor.stock.market.game.jbosak.service.getCompany
 import com.ktor.stock.market.game.jbosak.utils.convertToObject
 import graphql.schema.AsyncDataFetcher.async
-import graphql.schema.DataFetchingEnvironment
 import graphql.schema.idl.TypeRuntimeWiring
 import org.dataloader.BatchLoader
 import org.dataloader.DataLoader
@@ -42,57 +39,24 @@ fun getCompanySchema() =
     }
     """
 
-
-fun getSelectedFieldsByKey(env: DataFetchingEnvironment, allSelectedField:List<String>?): Map<String, (String?) -> DataLoaderKey<String?>> {
-    val selectedFields =allSelectedField.toOption().getOrElse { env
-        .selectionSet
-        .get()
-        .keySet()
-        .filterNotNull() }
-    return selectedFields.map { keyPath ->
-        val key = keyPath.split("/").last()
-        val keySelectedField = selectedFields
-            .map {field -> field.split("/") }
-            .filter { selected -> selected.contains(key) }
-            .map { field ->
-                field.pipe {
-                    it.subList(it.indexOf(key) + 1, it.size).joinToString("/")
-                }
-
-            };
-            key to { arg:String? -> DataLoaderKey(arg, keySelectedField,env)}
-    }.toMap()
-
-}
-
 fun TypeRuntimeWiring.Builder.companyQueryResolvers() =
     this.dataFetcher("companiesConnection", async { env ->
         val (skip, limit) = convertToObject(env.arguments, ConnectionArguments::class.java)!!
-        val resolvedDataLoaders = dataloaderResolver(env)
         val companies = getCompanies(skip,limit?: 10)
-        val allSelectedField = env
-            .selectionSet
-            .get()
-            .keySet()
-            .filterNotNull()
-        val dataLoadersArgs = getSelectedFieldsByKey(env,allSelectedField)
-        val stockPriceArg = dataLoadersArgs["stockPrice"]?.invoke(companies.firstOrNull()?.ticker)
-        val stockPriceResolver = resolvedDataLoaders["stockPrice"]
-        val stockPrice = stockPriceResolver?.load(stockPriceArg)
-        stockPriceResolver?.dispatch()
-        val stockPriceValue = stockPrice?.get()
+
+        val (companyResolver, companyKeyGenerator)
+                = dataloaderResolver(env).getOrElse("company") { Pair(null, null) }
+        val evalCompany = { ticker: String ->
+            companyResolver?.run {
+                val value = companyKeyGenerator?.invoke(ticker).pipe { this.load(it) }
+                dispatch()
+                value.get()
+            }
+        }
         object {
             val totalCount = companiesSize()
             val companies = companies.map {
-                CompanyGraphQL(
-                    id = it.id,
-                    ticker = it.ticker,
-                    cik = it.cik,
-                    externalId = it.externalId,
-                    lei = it.lei,
-                    name = it.name,
-                    stockPrice = stockPriceValue
-                )
+                evalCompany(it.ticker)
             }
         }
     })
@@ -106,12 +70,13 @@ fun companyDataLoader(): DataLoader<DataLoaderKey<Any>, Any>? {
                     is Int -> getCompany(id = it.key)
                     else -> null
                 }
-                val resolvedDataLoaders = dataloaderResolver(it.env, it.selectedFields)
-                val dataLoadersArgs = getSelectedFieldsByKey(it.env, it.selectedFields)
-                val stockPriceArg = dataLoadersArgs["stockPrice"]?.invoke(company?.ticker)
-                val stockPriceLoader = resolvedDataLoaders["stockPrice"]
-                val stockPrice = stockPriceLoader?.load(stockPriceArg)
-                stockPriceLoader?.dispatch()
+                val (stockPriceResolver, stockPriceKeyGenerator)
+                        = it.resolver.value.getOrElse("stockPrice") { Pair(null, null) }
+                val stockPrice = stockPriceResolver?.run {
+                    val value = stockPriceKeyGenerator?.invoke(company?.ticker).pipe { this.load(it) }
+                    dispatch()
+                    value.get()
+                }
 
                 CompanyGraphQL(
                     id = company!!.id,
@@ -120,12 +85,12 @@ fun companyDataLoader(): DataLoader<DataLoaderKey<Any>, Any>? {
                     externalId = company.externalId,
                     lei = company.lei,
                     name = company.name,
-                    stockPrice = stockPrice?.get()
+                    stockPrice = stockPrice
                 )
             }
         }
     }
-    val companiesDataLoader = DataLoader.newDataLoader(loaderById)
-    return companiesDataLoader
+    return DataLoader.newDataLoader(loaderById)
+
 
 }
