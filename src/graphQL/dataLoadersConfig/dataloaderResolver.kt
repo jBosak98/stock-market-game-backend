@@ -17,15 +17,15 @@ typealias DataLoaderResolver = Map<String, Pair<DataLoader<Any, Any>, (Any?) -> 
 inline fun <reified T> DataLoaderResolver.resolve(resolverName: String): (Any) -> T? {
     val (valueResolver, keyGenerator)
             = this.getOrElse(resolverName) { return { null } }
-    return { key:Any ->
-        val result = keyGenerator.invoke(key).pipe{ valueResolver.load(it) }
+    return { key: Any ->
+        val result = keyGenerator.invoke(key).pipe { valueResolver.load(it) }
         valueResolver.dispatch()
         result?.get() as T?
     }
 }
 
-inline fun <reified T, K> DataLoaderKey<K>.resolve(resolverName:String): (Any) -> T?
-        = this.resolver.value.resolve<T>(resolverName)
+inline fun <reified T, K> DataLoaderKey<K>.resolve(resolverName: String): (Any) -> T? =
+    this.resolver.value.resolve<T>(resolverName)
 
 fun dataloaderResolver(
     env: DataFetchingEnvironment,
@@ -48,8 +48,7 @@ fun dataloaderResolver(
                 .map(splitBySlash)
                 .filter(filterByKey)
                 .map(extractDataLoaderKeys)
-            val getResolver
-                    = lazy {
+            val getResolver = lazy {
                 dataloaderResolver(
                     env,
                     keySelectedField

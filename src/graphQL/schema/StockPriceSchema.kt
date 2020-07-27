@@ -46,8 +46,7 @@ fun TypeRuntimeWiring.Builder.stockPriceQueryResolvers(): TypeRuntimeWiring.Buil
             val resolvers =
                 dataloaderResolver(env)
             val response = getRealTimeSecurityPrice(ticker)
-            val company
-                    = resolvers.resolve<CompanyGraphQL>("company")(ticker)
+            val company = resolvers.resolve<CompanyGraphQL>("company")(ticker)
 
             listOf(response).map { stockPrice ->
                 toGraphQLStockPrice(stockPrice!!, company)
@@ -58,8 +57,8 @@ fun stockPriceDataLoader(): DataLoader<DataLoaderKey<String>, Any>? {
     val loader = BatchLoader<DataLoaderKey<String>, Any> { keys ->
         CompletableFuture.supplyAsync {
             keys.map {
-                val price = getRealTimeSecurityPrice(it.key)?: return@map null
-                val company =  it
+                val price = getRealTimeSecurityPrice(it.key) ?: return@map null
+                val company = it
                     .resolve<CompanyGraphQL, String>("company")(price.securityTicker)
                 price.toGraphQL(company)
             }

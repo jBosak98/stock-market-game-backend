@@ -4,8 +4,8 @@ import graphql.ExceptionWhileDataFetching
 import graphql.GraphQLError
 
 val formatErrorGraphQLError: (GraphQLError.() -> Map<String, Any>) = {
-    val clientMessage = if(this is ExceptionWhileDataFetching){
-        if(exception is ClientGraphQLException) exception.message
+    val clientMessage = if (this is ExceptionWhileDataFetching) {
+        if (exception is ClientGraphQLException) exception.message
         else "Internal server error"
     } else {
         message

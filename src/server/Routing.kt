@@ -23,7 +23,7 @@ import ktor.graphql.Config
 import ktor.graphql.fromRequest
 import ktor.graphql.graphQL
 
-fun Routing.setup(){
+fun Routing.setup() {
     authRoute()
     authenticate(optional = true) {
         get("/") {
@@ -57,6 +57,5 @@ fun Routing.setup(){
     }
 }
 
-fun getContext(call: ApplicationCall): Context
-        = Context(call.authentication.principal as User?)
+fun getContext(call: ApplicationCall): Context = Context(call.authentication.principal as User?)
 

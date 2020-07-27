@@ -5,7 +5,7 @@ import com.ktor.stock.market.game.jbosak.repository.UserRepository
 import io.ktor.auth.Authentication
 import io.ktor.auth.jwt.jwt
 
-fun Authentication.Configuration.setup(){
+fun Authentication.Configuration.setup() {
 
     jwt {
         verifier(JwtConfig.verifier)

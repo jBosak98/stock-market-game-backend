@@ -7,11 +7,11 @@ import org.threeten.bp.LocalDate
 
 
 fun fetchSecurityStockPrices(
-    identifier:String,
-    startDate:LocalDate,
-    endDate:LocalDate,
+    identifier: String,
+    startDate: LocalDate,
+    endDate: LocalDate,
     frequency: String,
-    pageSize:Int
+    pageSize: Int
 ): ApiResponseSecurityStockPrices? {
     val securityApi = SecurityApi()
     val nextPage: String? = null
@@ -24,10 +24,10 @@ fun fetchSecurityStockPrices(
             pageSize,
             nextPage
         )
-       result
-    }catch (e:ApiException){
-       println("ERROR: ${e.message}")
-       null
+        result
+    } catch (e: ApiException) {
+        println("ERROR: ${e.message}")
+        null
     }
 
 }

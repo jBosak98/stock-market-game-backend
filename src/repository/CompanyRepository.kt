@@ -11,7 +11,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 object CompanyRepository {
 
-    private fun <T>assignCompany(company:CompanySummary): T.(InsertStatement<Number>)-> Unit = {
+    private fun <T> assignCompany(company: CompanySummary): T.(InsertStatement<Number>) -> Unit = {
         it[Companies.externalId] = company.id
         it[Companies.ticker] = company.ticker
         it[Companies.name] = company.name
@@ -19,21 +19,28 @@ object CompanyRepository {
         it[Companies.cik] = company.cik
     }
 
-    fun insert(company:CompanySummary) = transaction {
+    fun insert(company: CompanySummary) = transaction {
         Companies.insert(assignCompany(company)) get Companies.id
     }
-    fun insertMany(companies:List<CompanySummary>) = transaction {
+
+    fun insertMany(companies: List<CompanySummary>) = transaction {
         companies.map { company ->
             Companies.insert(assignCompany(company)) get Companies.id
         }
     }
 
-    fun findCompany(id:Int? = null, externalId:String? = null, ticker: String? = null) = transaction {
-        val comparator: SqlExpressionBuilder.()-> Op<Boolean> =
+    fun findCompany(id: Int? = null, externalId: String? = null, ticker: String? = null) = transaction {
+        val comparator: SqlExpressionBuilder.() -> Op<Boolean> =
             when {
-                id != null -> {{ Companies.id eq id }}
-                externalId != null -> {{ Companies.externalId eq externalId }}
-                ticker != null -> {{ Companies.ticker eq ticker }}
+                id != null -> {
+                    { Companies.id eq id }
+                }
+                externalId != null -> {
+                    { Companies.externalId eq externalId }
+                }
+                ticker != null -> {
+                    { Companies.ticker eq ticker }
+                }
                 else -> return@transaction Option.empty<Company>()
             }
         Companies
@@ -45,7 +52,7 @@ object CompanyRepository {
 
     fun companiesSize() = transaction { Companies.selectAll().count() }
 
-    fun findCompanies(skip:Int, limit:Int) = transaction {
+    fun findCompanies(skip: Int, limit: Int) = transaction {
         Companies
             .selectAll()
             .limit(limit, skip)

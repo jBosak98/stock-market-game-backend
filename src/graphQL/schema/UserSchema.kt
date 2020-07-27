@@ -33,7 +33,7 @@ fun TypeRuntimeWiring.Builder.userMutationResolvers() =
     this
         .dataFetcher("register") { env ->
             val user = convertToObject(env.arguments, RegistrationWrapper::class.java)!!.user
-            if(UserRepository.doesUserExist(user.email))
+            if (UserRepository.doesUserExist(user.email))
                 throw ClientGraphQLException("user exists")
 
             AuthService.register(user)
@@ -49,5 +49,5 @@ fun TypeRuntimeWiring.Builder.userQueryResolvers() =
         .dataFetcher("login") { env ->
             val credentials = convertToObject(env.arguments, CredentialWrapper::class.java)!!.user
             val login = AuthService.login(credentials)
-            login.valueOr {error -> throw error }
+            login.valueOr { error -> throw error }
         }

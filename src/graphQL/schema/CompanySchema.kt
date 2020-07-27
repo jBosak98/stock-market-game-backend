@@ -40,10 +40,10 @@ fun getCompanySchema() =
 fun TypeRuntimeWiring.Builder.companyQueryResolvers() =
     this.dataFetcher("companiesConnection", async { env ->
         val (skip, limit) = convertToObject(env.arguments, ConnectionArguments::class.java)!!
-        val companies = getCompanies(skip,limit?: 10)
+        val companies = getCompanies(skip, limit ?: 10)
         val resolvers =
             dataloaderResolver(env)
-        val evalCompany =resolvers.resolve<CompanyGraphQL>("companies")
+        val evalCompany = resolvers.resolve<CompanyGraphQL>("companies")
 
         CompaniesConnectionGraphQL(
             totalCount = companiesSize(),
@@ -55,11 +55,11 @@ fun companyDataLoader(): DataLoader<DataLoaderKey<Any>, Any>? {
     val loaderById = BatchLoader<DataLoaderKey<Any>, Any> { keys ->
         CompletableFuture.supplyAsync {
             keys.map {
-               val company = when (it.key) {
+                val company = when (it.key) {
                     is String -> getCompany(ticker = it.key)
                     is Int -> getCompany(id = it.key)
-                    else ->  null
-                }?: return@map null
+                    else -> null
+                } ?: return@map null
 
                 val stockPrice =
                     it.resolve<StockPriceGraphQL, Any>("stockPrice")(company.ticker)
