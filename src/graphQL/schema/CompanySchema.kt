@@ -1,5 +1,8 @@
-package com.ktor.stock.market.game.jbosak.graphQL
+package com.ktor.stock.market.game.jbosak.graphQL.schema
 
+import com.ktor.stock.market.game.jbosak.graphQL.dataLoadersConfig.DataLoaderKey
+import com.ktor.stock.market.game.jbosak.graphQL.dataLoadersConfig.dataloaderResolver
+import com.ktor.stock.market.game.jbosak.graphQL.dataLoadersConfig.resolve
 import com.ktor.stock.market.game.jbosak.model.ConnectionArguments
 import com.ktor.stock.market.game.jbosak.model.graphql.CompaniesConnectionGraphQL
 import com.ktor.stock.market.game.jbosak.model.graphql.CompanyGraphQL
@@ -38,7 +41,8 @@ fun TypeRuntimeWiring.Builder.companyQueryResolvers() =
     this.dataFetcher("companiesConnection", async { env ->
         val (skip, limit) = convertToObject(env.arguments, ConnectionArguments::class.java)!!
         val companies = getCompanies(skip,limit?: 10)
-        val resolvers = dataloaderResolver(env)
+        val resolvers =
+            dataloaderResolver(env)
         val evalCompany =resolvers.resolve<CompanyGraphQL>("companies")
 
         CompaniesConnectionGraphQL(

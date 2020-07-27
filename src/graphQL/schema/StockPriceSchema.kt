@@ -1,5 +1,8 @@
-package com.ktor.stock.market.game.jbosak.graphQL
+package com.ktor.stock.market.game.jbosak.graphQL.schema
 
+import com.ktor.stock.market.game.jbosak.graphQL.dataLoadersConfig.DataLoaderKey
+import com.ktor.stock.market.game.jbosak.graphQL.dataLoadersConfig.dataloaderResolver
+import com.ktor.stock.market.game.jbosak.graphQL.dataLoadersConfig.resolve
 import com.ktor.stock.market.game.jbosak.model.graphql.CompanyGraphQL
 import com.ktor.stock.market.game.jbosak.model.graphql.toGraphQLStockPrice
 import com.ktor.stock.market.game.jbosak.model.toGraphQL
@@ -40,7 +43,8 @@ fun TypeRuntimeWiring.Builder.stockPriceQueryResolvers(): TypeRuntimeWiring.Buil
     this
         .dataFetcher("getPrices", async { env ->
             val ticker = env.arguments["ticker"] as String
-            val resolvers = dataloaderResolver(env)
+            val resolvers =
+                dataloaderResolver(env)
             val response = getRealTimeSecurityPrice(ticker)
             val company
                     = resolvers.resolve<CompanyGraphQL>("company")(ticker)

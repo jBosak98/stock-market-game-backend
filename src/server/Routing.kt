@@ -1,9 +1,9 @@
 package com.ktor.stock.market.game.jbosak.server
 
 
+import com.ktor.stock.market.game.jbosak.graphQL.dataLoadersConfig.generateDataLoaders
 import com.ktor.stock.market.game.jbosak.graphQL.formatErrorGraphQLError
-import com.ktor.stock.market.game.jbosak.graphQL.generateDataLoaders
-import com.ktor.stock.market.game.jbosak.graphQL.getSchema
+import com.ktor.stock.market.game.jbosak.graphQL.schema.getSchema
 import com.ktor.stock.market.game.jbosak.model.Context
 import com.ktor.stock.market.game.jbosak.model.User
 import com.ktor.stock.market.game.jbosak.route.authRoute

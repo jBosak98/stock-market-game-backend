@@ -1,4 +1,4 @@
-package com.ktor.stock.market.game.jbosak.graphQL
+package com.ktor.stock.market.game.jbosak.graphQL.dataLoadersConfig
 
 import arrow.core.getOrElse
 import arrow.core.toOption
@@ -14,7 +14,7 @@ data class DataLoaderKey<T>(
 )
 typealias DataLoaderResolver = Map<String, Pair<DataLoader<Any, Any>, (Any?) -> DataLoaderKey<Any?>>>
 
-inline fun <reified T>DataLoaderResolver.resolve(resolverName: String): (Any) -> T? {
+inline fun <reified T> DataLoaderResolver.resolve(resolverName: String): (Any) -> T? {
     val (valueResolver, keyGenerator)
             = this.getOrElse(resolverName) { return { null } }
     return { key:Any ->
@@ -24,7 +24,7 @@ inline fun <reified T>DataLoaderResolver.resolve(resolverName: String): (Any) ->
     }
 }
 
-inline fun <reified T, K>DataLoaderKey<K>.resolve(resolverName:String): (Any) -> T?
+inline fun <reified T, K> DataLoaderKey<K>.resolve(resolverName:String): (Any) -> T?
         = this.resolver.value.resolve<T>(resolverName)
 
 fun dataloaderResolver(
@@ -49,10 +49,22 @@ fun dataloaderResolver(
                 .filter(filterByKey)
                 .map(extractDataLoaderKeys)
             val getResolver
-                    = lazy { dataloaderResolver(env, keySelectedField) }
+                    = lazy {
+                dataloaderResolver(
+                    env,
+                    keySelectedField
+                )
+            }
             key to Pair(
                 env.getDataLoader<Any, Any>(key),
-                { arg: Any? -> DataLoaderKey(arg, keySelectedField, env,getResolver) }
+                { arg: Any? ->
+                    DataLoaderKey(
+                        arg,
+                        keySelectedField,
+                        env,
+                        getResolver
+                    )
+                }
             )
         }
         .toMap()

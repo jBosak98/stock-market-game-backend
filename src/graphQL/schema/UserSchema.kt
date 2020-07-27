@@ -1,10 +1,11 @@
-package com.ktor.stock.market.game.jbosak.graphQL
+package com.ktor.stock.market.game.jbosak.graphQL.schema
 
 import arrow.core.valueOr
-import com.ktor.stock.market.game.jbosak.repository.UserRepository
+import com.ktor.stock.market.game.jbosak.graphQL.ClientGraphQLException
 import com.ktor.stock.market.game.jbosak.model.Context
 import com.ktor.stock.market.game.jbosak.model.CredentialWrapper
 import com.ktor.stock.market.game.jbosak.model.RegistrationWrapper
+import com.ktor.stock.market.game.jbosak.repository.UserRepository
 import com.ktor.stock.market.game.jbosak.service.AuthService
 import com.ktor.stock.market.game.jbosak.utils.convertToObject
 import graphql.schema.idl.TypeRuntimeWiring

@@ -1,4 +1,4 @@
-package com.ktor.stock.market.game.jbosak.graphQL
+package com.ktor.stock.market.game.jbosak.graphQL.schema
 
 import graphql.schema.GraphQLSchema
 import graphql.schema.idl.RuntimeWiring.newRuntimeWiring
