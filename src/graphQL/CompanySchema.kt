@@ -1,6 +1,5 @@
 package com.ktor.stock.market.game.jbosak.graphQL
 
-import arrow.syntax.function.pipe
 import com.ktor.stock.market.game.jbosak.model.ConnectionArguments
 import com.ktor.stock.market.game.jbosak.repository.CompanyRepository.companiesSize
 import com.ktor.stock.market.game.jbosak.service.getCompanies
@@ -43,16 +42,9 @@ fun TypeRuntimeWiring.Builder.companyQueryResolvers() =
     this.dataFetcher("companiesConnection", async { env ->
         val (skip, limit) = convertToObject(env.arguments, ConnectionArguments::class.java)!!
         val companies = getCompanies(skip,limit?: 10)
+        val resolvers = dataloaderResolver(env)
+        val evalCompany =resolvers.resolve<CompanyGraphQL>("companies")
 
-        val (companyResolver, companyKeyGenerator)
-                = dataloaderResolver(env).getOrElse("company") { Pair(null, null) }
-        val evalCompany = { ticker: String ->
-            companyResolver?.run {
-                val value = companyKeyGenerator?.invoke(ticker).pipe { this.load(it) }
-                dispatch()
-                value.get()
-            }
-        }
         object {
             val totalCount = companiesSize()
             val companies = companies.map {
@@ -68,18 +60,12 @@ fun companyDataLoader(): DataLoader<DataLoaderKey<Any>, Any>? {
                val company = when (it.key) {
                     is String -> getCompany(ticker = it.key)
                     is Int -> getCompany(id = it.key)
-                    else -> null
-                }
-                val (stockPriceResolver, stockPriceKeyGenerator)
-                        = it.resolver.value.getOrElse("stockPrice") { Pair(null, null) }
-                val stockPrice = stockPriceResolver?.run {
-                    val value = stockPriceKeyGenerator?.invoke(company?.ticker).pipe { this.load(it) }
-                    dispatch()
-                    value.get()
-                }
-
+                    else ->  null
+                }?: return@map null
+                val stockPrice =
+                    it.resolve<StockPriceGraphQL, Any>("stockPrice")(company.ticker)
                 CompanyGraphQL(
-                    id = company!!.id,
+                    id = company.id,
                     ticker = company.ticker,
                     cik = company.cik,
                     externalId = company.externalId,

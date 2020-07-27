@@ -1,6 +1,5 @@
 package com.ktor.stock.market.game.jbosak.graphQL
 
-import arrow.syntax.function.pipe
 import com.ktor.stock.market.game.jbosak.model.StockPrice
 import com.ktor.stock.market.game.jbosak.service.getRealTimeSecurityPrice
 import graphql.schema.AsyncDataFetcher.async
@@ -40,17 +39,10 @@ fun TypeRuntimeWiring.Builder.stockPriceQueryResolvers(): TypeRuntimeWiring.Buil
     this
         .dataFetcher("getPrices", async { env ->
             val ticker = env.arguments["ticker"] as String
-            val resolvedDataLoaders = dataloaderResolver(env)
+            val resolvers = dataloaderResolver(env)
             val response = getRealTimeSecurityPrice(ticker)
-            val (companyResolver, companyKeyGenerator)
-                    = dataloaderResolver(env).getOrElse("company") { Pair(null, null) }
-            val company = companyResolver?.run {
-                val companyArg = companyKeyGenerator?.invoke(ticker)
-                val value = load(companyArg)
-                dispatch()
-                value?.get()
-            }
-
+            val company
+                    = resolvers.resolve<CompanyGraphQL>("company")(ticker)
 
             listOf(response).map { stockPrice ->
                 toGraphQLStockPrice(stockPrice!!, company)
@@ -101,15 +93,10 @@ fun stockPriceDataLoader(): DataLoader<DataLoaderKey<String>, Any>? {
     val loader = BatchLoader<DataLoaderKey<String>, Any> { keys ->
         CompletableFuture.supplyAsync {
             keys.map {
-                val price = getRealTimeSecurityPrice(it.key)
-                val (companyResolver, companyKeyGenerator)
-                        = it.resolver.value.getOrElse("company") { Pair(null, null) }
-                val company = companyResolver?.run {
-                    val value = companyKeyGenerator?.invoke(price?.securityTicker).pipe{ load(it) }
-                    dispatch()
-                    value.get()
-                }
-                toGraphQLStockPrice(price!!, company)
+                val price = getRealTimeSecurityPrice(it.key)?: return@map null
+                val company =  it
+                    .resolve<CompanyGraphQL, String>("company")(price.securityTicker)
+                toGraphQLStockPrice(price, company)
             }
         }
     }
