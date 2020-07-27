@@ -1,6 +1,7 @@
 package com.ktor.stock.market.game.jbosak.graphQL
 
 import com.ktor.stock.market.game.jbosak.model.ConnectionArguments
+import com.ktor.stock.market.game.jbosak.model.graphql.CompaniesConnectionGraphQL
 import com.ktor.stock.market.game.jbosak.model.graphql.CompanyGraphQL
 import com.ktor.stock.market.game.jbosak.model.graphql.StockPriceGraphQL
 import com.ktor.stock.market.game.jbosak.model.toGraphQL
@@ -40,12 +41,10 @@ fun TypeRuntimeWiring.Builder.companyQueryResolvers() =
         val resolvers = dataloaderResolver(env)
         val evalCompany =resolvers.resolve<CompanyGraphQL>("companies")
 
-        object {
-            val totalCount = companiesSize()
-            val companies = companies.map {
-                evalCompany(it.ticker)
-            }
-        }
+        CompaniesConnectionGraphQL(
+            totalCount = companiesSize(),
+            companies = companies.map { evalCompany(it.ticker) }
+        )
     })
 
 fun companyDataLoader(): DataLoader<DataLoaderKey<Any>, Any>? {
