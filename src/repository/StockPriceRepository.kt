@@ -16,7 +16,7 @@ object StockPriceRepository {
             it[updatedOn] = price.updatedOn.toDateTime()
             it[lastPrice] = price.lastPrice.toPriceInt()!!
             it[lastTime] = price.lastTime.toDateTime()
-            it[bidPrice] = price.bidPrice.toPriceInt()!!
+            it[bidPrice] = 0//price.bidPrice.toPriceInt()!!TODO: should be nullable
             it[askPrice] = price.askPrice.toPriceInt()!!
             it[askSize] = price.askSize.toPriceInt()!!
             it[openPrice] = price.openPrice.toPriceInt()

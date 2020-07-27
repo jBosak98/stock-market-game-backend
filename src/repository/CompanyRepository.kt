@@ -1,9 +1,11 @@
 package com.ktor.stock.market.game.jbosak.repository
 
+import arrow.core.Option
+import arrow.core.toOption
 import com.intrinio.models.CompanySummary
+import com.ktor.stock.market.game.jbosak.model.Company
 import com.ktor.stock.market.game.jbosak.model.db.Companies
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.statements.InsertStatement
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -32,12 +34,13 @@ object CompanyRepository {
                 id != null -> {{ Companies.id eq id }}
                 externalId != null -> {{ Companies.externalId eq externalId }}
                 ticker != null -> {{ Companies.ticker eq ticker }}
-                else -> return@transaction null
+                else -> return@transaction Option.empty<Company>()
             }
         Companies
             .select(comparator)
             .singleOrNull()
             ?.let(ResultRow::toCompany)
+            .toOption()
     }
 
     fun companiesSize() = transaction { Companies.selectAll().count() }
@@ -48,15 +51,4 @@ object CompanyRepository {
             .limit(limit, skip)
             .map(ResultRow::toCompany)
     }
-
-
-    fun <T,V> twoOptionsComparator(opt1:T?,column1:Column<T>, opt2:V?, column2:Column<V>)
-            : (() -> Op<Boolean>)? =
-        when {
-            opt1 != null -> {{ column1 eq opt1 }}
-            opt2 != null -> {{ column2 eq opt2 }}
-            else -> null
-        }
-
-
 }

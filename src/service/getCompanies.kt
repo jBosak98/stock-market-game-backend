@@ -1,5 +1,6 @@
 package com.ktor.stock.market.game.jbosak.service
 
+import arrow.core.getOrElse
 import com.intrinio.api.CompanyApi
 import com.intrinio.invoker.ApiException
 import com.intrinio.models.ApiResponseCompanies
@@ -12,6 +13,14 @@ fun getCompanies(skip:Int, limit:Int): List<Company> {
     return if(companies.isNotEmpty()) companies
             else refetch(skip, limit)
 }
+
+fun getCompany(id:Int? = null, externalId:String? = null, ticker:String? = null): Company? =
+    CompanyRepository.findCompany(id, externalId, ticker).getOrElse {
+        refetch(0, 1000)
+        CompanyRepository.findCompany(id, externalId, ticker).orNull()
+    }
+
+
 
 private fun refetch(skip:Int, limit: Int): List<Company> {
     val yearAgoDate = LocalDate.now().minusYears(1)
