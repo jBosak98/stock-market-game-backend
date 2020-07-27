@@ -1,6 +1,9 @@
 package com.ktor.stock.market.game.jbosak.graphQL
 
 import com.ktor.stock.market.game.jbosak.model.ConnectionArguments
+import com.ktor.stock.market.game.jbosak.model.graphql.CompanyGraphQL
+import com.ktor.stock.market.game.jbosak.model.graphql.StockPriceGraphQL
+import com.ktor.stock.market.game.jbosak.model.toGraphQL
 import com.ktor.stock.market.game.jbosak.repository.CompanyRepository.companiesSize
 import com.ktor.stock.market.game.jbosak.service.getCompanies
 import com.ktor.stock.market.game.jbosak.service.getCompany
@@ -11,15 +14,7 @@ import org.dataloader.BatchLoader
 import org.dataloader.DataLoader
 import java.util.concurrent.CompletableFuture
 
-data class CompanyGraphQL(
-    val id:Int,
-    val ticker:String,
-    val name:String,
-    val lei:String?,
-    val cik:String,
-    val externalId:String,
-    val stockPrice: Any?
-)
+
 fun getCompanySchema() =
     """
     type Company {
@@ -62,17 +57,10 @@ fun companyDataLoader(): DataLoader<DataLoaderKey<Any>, Any>? {
                     is Int -> getCompany(id = it.key)
                     else ->  null
                 }?: return@map null
+
                 val stockPrice =
                     it.resolve<StockPriceGraphQL, Any>("stockPrice")(company.ticker)
-                CompanyGraphQL(
-                    id = company.id,
-                    ticker = company.ticker,
-                    cik = company.cik,
-                    externalId = company.externalId,
-                    lei = company.lei,
-                    name = company.name,
-                    stockPrice = stockPrice
-                )
+                company.toGraphQL(stockPrice)
             }
         }
     }

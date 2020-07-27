@@ -1,12 +1,13 @@
 package com.ktor.stock.market.game.jbosak.graphQL
 
-import com.ktor.stock.market.game.jbosak.model.StockPrice
+import com.ktor.stock.market.game.jbosak.model.graphql.CompanyGraphQL
+import com.ktor.stock.market.game.jbosak.model.graphql.toGraphQLStockPrice
+import com.ktor.stock.market.game.jbosak.model.toGraphQL
 import com.ktor.stock.market.game.jbosak.service.getRealTimeSecurityPrice
 import graphql.schema.AsyncDataFetcher.async
 import graphql.schema.idl.TypeRuntimeWiring
 import org.dataloader.BatchLoader
 import org.dataloader.DataLoader
-import org.joda.time.DateTime
 import java.util.concurrent.CompletableFuture
 
 fun getStockPriceSchema() =
@@ -49,46 +50,6 @@ fun TypeRuntimeWiring.Builder.stockPriceQueryResolvers(): TypeRuntimeWiring.Buil
             }
         })
 
-private fun toGraphQLStockPrice(stockPrice: StockPrice, company: Any?) =
-    StockPriceGraphQL(
-        id = stockPrice.id,
-        updatedOn = stockPrice.updatedOn,
-        lastPrice = stockPrice.lastPrice,
-        lastTime = stockPrice.lastTime,
-        bidPrice = stockPrice.bidPrice,
-        askPrice = stockPrice.askPrice,
-        askSize = stockPrice.askSize,
-        dataSource = stockPrice.dataSource,
-        exchangeVolume = stockPrice.exchangeVolume,
-        highPrice = stockPrice.highPrice,
-        lowPrice = stockPrice.lowPrice,
-        marketVolume = stockPrice.marketVolume,
-        openPrice = stockPrice.openPrice,
-        securityExternalId = stockPrice.securityExternalId,
-        securityTicker = stockPrice.securityTicker,
-        company = company
-    )
-
-data class StockPriceGraphQL(
-    val id:Int,
-    val updatedOn: DateTime,
-    val lastPrice:Int,
-    val lastTime:DateTime,
-    val bidPrice:Int,
-    val askPrice:Int,
-    val askSize:Int,
-    val openPrice:Int?,
-    val highPrice:Int?,
-    val lowPrice:Int?,
-    val exchangeVolume:Int,
-    val marketVolume:Int?,
-    val dataSource:String,
-    val securityExternalId:String,
-    val securityTicker:String,
-    val company:Any?
-)
-
-
 fun stockPriceDataLoader(): DataLoader<DataLoaderKey<String>, Any>? {
     val loader = BatchLoader<DataLoaderKey<String>, Any> { keys ->
         CompletableFuture.supplyAsync {
@@ -96,7 +57,7 @@ fun stockPriceDataLoader(): DataLoader<DataLoaderKey<String>, Any>? {
                 val price = getRealTimeSecurityPrice(it.key)?: return@map null
                 val company =  it
                     .resolve<CompanyGraphQL, String>("company")(price.securityTicker)
-                toGraphQLStockPrice(price, company)
+                price.toGraphQL(company)
             }
         }
     }

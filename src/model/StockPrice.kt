@@ -1,5 +1,8 @@
 package com.ktor.stock.market.game.jbosak.model
 
+
+import com.ktor.stock.market.game.jbosak.model.graphql.CompanyGraphQL
+import com.ktor.stock.market.game.jbosak.model.graphql.StockPriceGraphQL
 import org.joda.time.DateTime
 
 data class StockPrice(
@@ -19,3 +22,23 @@ data class StockPrice(
     val securityExternalId:String,
     val securityTicker:String
 )
+
+fun StockPrice.toGraphQL(company: CompanyGraphQL?) =
+    StockPriceGraphQL(
+        id = this.id,
+        updatedOn = this.updatedOn,
+        lastPrice = this.lastPrice,
+        lastTime = this.lastTime,
+        bidPrice = this.bidPrice,
+        askPrice = this.askPrice,
+        askSize = this.askSize,
+        dataSource = this.dataSource,
+        exchangeVolume = this.exchangeVolume,
+        highPrice = this.highPrice,
+        lowPrice = this.lowPrice,
+        marketVolume = this.marketVolume,
+        openPrice = this.openPrice,
+        securityExternalId = this.securityExternalId,
+        securityTicker = this.securityTicker,
+        company = company
+    )
