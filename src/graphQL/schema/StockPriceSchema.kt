@@ -1,5 +1,6 @@
 package com.ktor.stock.market.game.jbosak.graphQL.schema
 
+import arrow.core.valueOr
 import com.ktor.stock.market.game.jbosak.graphQL.dataLoadersConfig.DataLoaderKey
 import com.ktor.stock.market.game.jbosak.graphQL.dataLoadersConfig.dataloaderResolver
 import com.ktor.stock.market.game.jbosak.graphQL.dataLoadersConfig.resolve
@@ -45,11 +46,11 @@ fun TypeRuntimeWiring.Builder.stockPriceQueryResolvers(): TypeRuntimeWiring.Buil
             val ticker = env.arguments["ticker"] as String
             val resolvers =
                 dataloaderResolver(env)
-            val response = getRealTimeSecurityPrice(ticker)
+            val response = getRealTimeSecurityPrice(ticker).valueOr { throw it }
             val company = resolvers.resolve<CompanyGraphQL>("company")(ticker)
 
             listOf(response).map { stockPrice ->
-                toGraphQLStockPrice(stockPrice!!, company)
+                toGraphQLStockPrice(stockPrice, company)
             }
         })
 
@@ -57,7 +58,7 @@ fun stockPriceDataLoader(): DataLoader<DataLoaderKey<String>, Any>? {
     val loader = BatchLoader<DataLoaderKey<String>, Any> { keys ->
         CompletableFuture.supplyAsync {
             keys.map {
-                val price = getRealTimeSecurityPrice(it.key) ?: return@map null
+                val price = getRealTimeSecurityPrice(it.key).valueOr { error -> throw error }
                 val company = it
                     .resolve<CompanyGraphQL, String>("company")(price.securityTicker)
                 price.toGraphQL(company)
