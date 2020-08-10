@@ -7,7 +7,6 @@ data class CompanyGraphQL(
     val id: Int,
     val ticker: String,
     val quote: Quote?,
-    val stockPrice: Any?,
     val financials: CompanyFinancials?,
     val country: String?,
     val currency: String?,

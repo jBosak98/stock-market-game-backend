@@ -29,7 +29,7 @@ fun getUserSchema() =
         }
     """
 
-fun TypeRuntimeWiring.Builder.userMutationResolvers() =
+fun TypeRuntimeWiring.Builder.userMutationResolvers(): TypeRuntimeWiring.Builder =
     this
         .dataFetcher("register") { env ->
             val user = convertToObject(env.arguments, RegistrationWrapper::class.java)!!.user
@@ -39,7 +39,7 @@ fun TypeRuntimeWiring.Builder.userMutationResolvers() =
             AuthService.register(user)
         }
 
-fun TypeRuntimeWiring.Builder.userQueryResolvers() =
+fun TypeRuntimeWiring.Builder.userQueryResolvers(): TypeRuntimeWiring.Builder =
     this
         .dataFetcher("me") { env ->
             val authContext = env.getContext<Context>()

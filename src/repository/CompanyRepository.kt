@@ -1,6 +1,5 @@
 package com.ktor.stock.market.game.jbosak.repository
 
-//import com.intrinio.models.CompanySummary
 import arrow.core.Option
 import arrow.core.extensions.list.functorFilter.filter
 import arrow.core.toOption

@@ -1,7 +1,5 @@
 package com.ktor.stock.market.game.jbosak.graphQL.schema
 
-//import com.ktor.stock.market.game.jbosak.service.getCompanies
-//import com.ktor.stock.market.game.jbosak.service.getCompany
 import com.ktor.stock.market.game.jbosak.graphQL.dataLoadersConfig.DataLoaderKey
 import com.ktor.stock.market.game.jbosak.graphQL.dataLoadersConfig.dataloaderResolver
 import com.ktor.stock.market.game.jbosak.graphQL.dataLoadersConfig.resolve
@@ -9,7 +7,6 @@ import com.ktor.stock.market.game.jbosak.model.ConnectionArguments
 import com.ktor.stock.market.game.jbosak.model.Quote
 import com.ktor.stock.market.game.jbosak.model.graphql.CompaniesConnectionGraphQL
 import com.ktor.stock.market.game.jbosak.model.graphql.CompanyGraphQL
-import com.ktor.stock.market.game.jbosak.model.graphql.StockPriceGraphQL
 import com.ktor.stock.market.game.jbosak.model.toGraphQL
 import com.ktor.stock.market.game.jbosak.repository.CompanyRepository.companiesSize
 import com.ktor.stock.market.game.jbosak.service.getCompanies
@@ -37,7 +34,6 @@ fun getCompanySchema() =
         weburl: String
         logo: String
         finnhubIndustry: String
-        stockPrice: StockPrice
         financials: CompanyFinancials
         quote:Quote
     }
@@ -203,11 +199,9 @@ fun companyDataLoader(): DataLoader<DataLoaderKey<Any>, Any>? {
                     else -> null
                 } ?: return@map null
 
-                val stockPrice =
-                    it.resolve<StockPriceGraphQL, Any>("stockPrice")(company.ticker)
                 val quote =
                     it.resolve<Quote, Any>("quote")(company.ticker)
-                company.toGraphQL(stockPrice, quote)
+                company.toGraphQL(quote)
             }
         }
     }

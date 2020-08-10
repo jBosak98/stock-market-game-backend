@@ -2,7 +2,6 @@ package com.ktor.stock.market.game.jbosak.server
 
 import com.ktor.stock.market.game.jbosak.model.db.Companies
 import com.ktor.stock.market.game.jbosak.model.db.Quotes
-import com.ktor.stock.market.game.jbosak.model.db.StockPrices
 import com.ktor.stock.market.game.jbosak.model.db.Users
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -18,7 +17,6 @@ fun initDB() {
     transaction {
         SchemaUtils.create(Users)
         SchemaUtils.create(Companies)
-        SchemaUtils.create(StockPrices)
         SchemaUtils.create(Quotes)
     }
 }

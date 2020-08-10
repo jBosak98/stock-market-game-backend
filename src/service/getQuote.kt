@@ -6,6 +6,7 @@ import com.finnhub.api.apis.DefaultApi
 import com.ktor.stock.market.game.jbosak.graphQL.ClientGraphQLException
 import com.ktor.stock.market.game.jbosak.model.Quote
 import com.ktor.stock.market.game.jbosak.repository.QuoteRepository
+import com.ktor.stock.market.game.jbosak.utils.ensureCompanyExists
 import com.ktor.stock.market.game.jbosak.utils.isInLast5Minutes
 
 

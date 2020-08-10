@@ -1,7 +1,6 @@
 package com.ktor.stock.market.game.jbosak.model
 
 import com.ktor.stock.market.game.jbosak.model.graphql.CompanyGraphQL
-import com.ktor.stock.market.game.jbosak.model.graphql.StockPriceGraphQL
 
 data class Company(
     val id: Int,
@@ -21,11 +20,10 @@ data class Company(
 
 
 
-fun Company.toGraphQL(stockPrice: StockPriceGraphQL?, quote: Quote?) =
+fun Company.toGraphQL( quote: Quote?) =
     CompanyGraphQL(
         id = this.id,
         ticker = this.ticker,
-        stockPrice = stockPrice,
         financials = this.financials,
         country = this.country,
         currency = this.currency,
