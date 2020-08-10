@@ -1,4 +1,4 @@
-package com.ktor.stock.market.game.jbosak
+package com.ktor.stock.market.game.jbosak.server
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier

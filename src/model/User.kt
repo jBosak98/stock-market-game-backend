@@ -1,6 +1,6 @@
 package com.ktor.stock.market.game.jbosak.model
 
-import com.ktor.stock.market.game.jbosak.JwtConfig
+import com.ktor.stock.market.game.jbosak.server.JwtConfig
 import io.ktor.auth.Principal
 
 data class User(

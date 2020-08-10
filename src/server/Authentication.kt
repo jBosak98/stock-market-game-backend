@@ -1,6 +1,5 @@
 package com.ktor.stock.market.game.jbosak.server
 
-import com.ktor.stock.market.game.jbosak.JwtConfig
 import com.ktor.stock.market.game.jbosak.repository.UserRepository
 import io.ktor.auth.Authentication
 import io.ktor.auth.jwt.jwt
@@ -19,9 +18,7 @@ fun Authentication.Configuration.setup() {
                     val token = JwtConfig.makeToken(user)
                     user.copy(token = token)
                 }
-
-            if (user === null) null
-            else user
+            user
         }
     }
 }

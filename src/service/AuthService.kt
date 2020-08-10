@@ -1,8 +1,8 @@
 package com.ktor.stock.market.game.jbosak.service
 
 import arrow.core.Validated
-import com.ktor.stock.market.game.jbosak.BcryptHasher
-import com.ktor.stock.market.game.jbosak.JwtConfig
+import com.ktor.stock.market.game.jbosak.utils.BcryptHasher
+import com.ktor.stock.market.game.jbosak.server.JwtConfig
 import com.ktor.stock.market.game.jbosak.graphQL.ClientGraphQLException
 import com.ktor.stock.market.game.jbosak.model.LoginCredentials
 import com.ktor.stock.market.game.jbosak.model.RegistrationDetails
