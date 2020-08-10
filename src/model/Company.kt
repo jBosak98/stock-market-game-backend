@@ -6,19 +6,36 @@ import com.ktor.stock.market.game.jbosak.model.graphql.StockPriceGraphQL
 data class Company(
     val id: Int,
     val ticker: String,
-    val name: String,
-    val lei: String?,
-    val cik: String,
-    val externalId: String
+    val financials: CompanyFinancials,
+    val country: String?,
+    val currency: String?,
+    val exchange: String?,
+    val ipo: String?,
+    val name: String?,
+    val phone: String?,
+    val shareOutstanding: Float?,
+    val weburl: String?,
+    val logo: String?,
+    val finnhubIndustry: String?
 )
 
-fun Company.toGraphQL(stockPrice: StockPriceGraphQL?) =
+
+
+fun Company.toGraphQL(stockPrice: StockPriceGraphQL?, quote: Quote?) =
     CompanyGraphQL(
         id = this.id,
         ticker = this.ticker,
-        cik = this.cik,
-        externalId = this.externalId,
-        lei = this.lei,
+        stockPrice = stockPrice,
+        financials = this.financials,
+        country = this.country,
+        currency = this.currency,
+        exchange = this.exchange,
+        ipo = this.ipo,
         name = this.name,
-        stockPrice = stockPrice
+        phone = this.phone,
+        shareOutstanding = this.shareOutstanding,
+        weburl = this.weburl,
+        logo = this.logo,
+        finnhubIndustry = this.finnhubIndustry,
+        quote = quote
     )

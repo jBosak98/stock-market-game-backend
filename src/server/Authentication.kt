@@ -19,9 +19,7 @@ fun Authentication.Configuration.setup() {
                     val token = JwtConfig.makeToken(user)
                     user.copy(token = token)
                 }
-
-            if (user === null) null
-            else user
+            user
         }
     }
 }

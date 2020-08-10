@@ -1,7 +1,7 @@
 package com.ktor.stock.market.game.jbosak.model
 
 
-data class CompanyMetrics(
+data class CompanyFinancials(
     val tenDayAverageTradingVolume:Double?,
     val thirteenWeekPriceReturnDaily:Double?,
     val twentySixWeekPriceReturnDaily:Double?,
@@ -67,8 +67,8 @@ data class CompanyMetrics(
     val netDebtInterim:Double?,
     val netIncomeEmployeeAnnual:Double?,
     val netIncomeEmployeeTTM:Double?,
-    val netInterestCoverageAnnual:Any?,
-    val netInterestCoverageTTM:Any?,
+    val netInterestCoverageAnnual:Double?,
+    val netInterestCoverageTTM:Double?,
     val netMarginGrowth5Y: Double?,
     val netProfitMargin5Y:Double?,
     val netProfitMarginAnnual:Double?,

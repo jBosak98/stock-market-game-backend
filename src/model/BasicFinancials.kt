@@ -3,11 +3,11 @@ package com.ktor.stock.market.game.jbosak.model
 import com.finnhub.api.models.BasicFinancials
 
 
-fun BasicFinancials.getCompanyMetrics(): CompanyMetrics? {
+fun BasicFinancials.getCompanyMetrics(): CompanyFinancials? {
     val metrics = if(this.metric is Map<*, *>) this.metric as Map<*,*>
     else return null
 
-    return CompanyMetrics(
+    return CompanyFinancials(
         tenDayAverageTradingVolume = metrics["10DayAverageTradingVolume"] as Double?,
         thirteenWeekPriceReturnDaily = metrics["13WeekPriceReturnDaily"] as Double?,
         twentySixWeekPriceReturnDaily = metrics["26WeekPriceReturnDaily"] as Double?,
