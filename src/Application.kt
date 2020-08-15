@@ -36,4 +36,8 @@ fun Application.module(testing: Boolean = false) {
     install(Routing) { setup() }
 }
 @KtorExperimentalAPI
-val Application.finnhubKey get() = environment.config.property("ktor.deployment.finnhubKey").getString()
+val Application.finnhubKey get()
+    = environment
+        .config
+        .property("ktor.deployment.finnhubKey")
+        .getString()

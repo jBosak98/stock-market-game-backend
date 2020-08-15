@@ -27,7 +27,7 @@ fun Route.authRoute() {
             if (UserRepository.doesUserExist(details.email))
                 call.respond(HttpStatusCode.BadRequest)
             else {
-                AuthService.register(details)
+                AuthService.register(details).valueOr { throw it }
                 call.respond(HttpStatusCode.Created)
             }
 

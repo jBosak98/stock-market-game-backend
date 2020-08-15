@@ -22,7 +22,7 @@ fun getSchema(): GraphQLSchema {
             }
     
             type Mutation {
-                register(user: UserRegisterInput!): User!
+                register(user: UserRegisterInput!): User
                 updateName(name: String!): User
             }
             schema {

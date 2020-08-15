@@ -8,6 +8,7 @@ import com.ktor.stock.market.game.jbosak.model.RegistrationWrapper
 import com.ktor.stock.market.game.jbosak.repository.UserRepository
 import com.ktor.stock.market.game.jbosak.service.AuthService
 import com.ktor.stock.market.game.jbosak.utils.convertToObject
+import graphql.schema.AsyncDataFetcher.async
 import graphql.schema.idl.TypeRuntimeWiring
 
 
@@ -31,13 +32,14 @@ fun getUserSchema() =
 
 fun TypeRuntimeWiring.Builder.userMutationResolvers(): TypeRuntimeWiring.Builder =
     this
-        .dataFetcher("register") { env ->
+        .dataFetcher("register", async { env ->
             val user = convertToObject(env.arguments, RegistrationWrapper::class.java)!!.user
             if (UserRepository.doesUserExist(user.email))
                 throw ClientGraphQLException("user exists")
 
-            AuthService.register(user)
-        }
+            val response = AuthService.register(user).valueOr { throw it }
+            response
+        })
 
 fun TypeRuntimeWiring.Builder.userQueryResolvers(): TypeRuntimeWiring.Builder =
     this
