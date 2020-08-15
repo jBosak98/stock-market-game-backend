@@ -20,8 +20,8 @@ private fun refetchDelayed(companies:List<Company>, condition:(Company)-> Boolea
     }
 
 }
-fun initExternalApi()  {
-    ApiClient.apiKey["token"] = ""
+fun initExternalApi(finnhubKey:String)  {
+    ApiClient.apiKey["token"] = finnhubKey
 
     val companies = getCompanies(0,15)
     refetchDelayed(

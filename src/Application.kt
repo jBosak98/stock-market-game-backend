@@ -12,16 +12,17 @@ import io.ktor.features.DefaultHeaders
 import io.ktor.features.ForwardedHeaderSupport
 import io.ktor.gson.gson
 import io.ktor.routing.Routing
+import io.ktor.util.KtorExperimentalAPI
 
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
+@KtorExperimentalAPI
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
-
     initDB()
-    initExternalApi()
+    initExternalApi(finnhubKey)
 
     install(CORS) { setup() }
 
@@ -34,4 +35,5 @@ fun Application.module(testing: Boolean = false) {
 
     install(Routing) { setup() }
 }
-
+@KtorExperimentalAPI
+val Application.finnhubKey get() = environment.config.property("ktor.deployment.finnhubKey").getString()
