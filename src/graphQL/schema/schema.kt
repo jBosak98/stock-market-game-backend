@@ -12,6 +12,7 @@ fun getSchema(): GraphQLSchema {
             ${getUserSchema()}
             ${getCompanySchema()}
             ${getQuoteSchema()}
+            ${getShareShema()}
             
             type Query {
                 me: User
@@ -23,7 +24,7 @@ fun getSchema(): GraphQLSchema {
     
             type Mutation {
                 register(user: UserRegisterInput!): User
-                updateName(name: String!): User
+                buyShare(ticker:String!, amount: Int!): User
             }
             schema {
                 query: Query
@@ -41,6 +42,7 @@ fun getSchema(): GraphQLSchema {
         .type("Mutation") { builder ->
             builder
                 .userMutationResolvers()
+                .shareMutationResolvers()
         }
         .build()
     return SchemaGenerator()

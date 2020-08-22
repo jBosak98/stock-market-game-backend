@@ -1,11 +1,9 @@
 package com.ktor.stock.market.game.jbosak.repository
 
 
-import com.ktor.stock.market.game.jbosak.model.Company
-import com.ktor.stock.market.game.jbosak.model.CompanyFinancials
-import com.ktor.stock.market.game.jbosak.model.Quote
-import com.ktor.stock.market.game.jbosak.model.User
+import com.ktor.stock.market.game.jbosak.model.*
 import com.ktor.stock.market.game.jbosak.model.db.Companies
+import com.ktor.stock.market.game.jbosak.model.db.Players
 import com.ktor.stock.market.game.jbosak.model.db.Quotes
 import com.ktor.stock.market.game.jbosak.model.db.Users
 import org.jetbrains.exposed.sql.ResultRow
@@ -18,6 +16,13 @@ fun ResultRow.toUser() = User(
 
 )
 
+fun ResultRow.toPlayer() = Player(
+    id = this[Players.id],
+    money = this[Players.money],
+    userId = this[Players.userId],
+    startedAt = this[Players.startedAt],
+    removedAt = this[Players.removedAt]
+)
 
 fun ResultRow.toQuote() = Quote(
     id = this[Quotes.id],
