@@ -1,6 +1,7 @@
 package com.ktor.stock.market.game.jbosak.model
 
 import com.ktor.stock.market.game.jbosak.model.graphql.AssetsGraphQL
+import com.ktor.stock.market.game.jbosak.model.graphql.ShareGraphQL
 import com.ktor.stock.market.game.jbosak.model.graphql.UserGraphQL
 import com.ktor.stock.market.game.jbosak.server.JwtConfig
 import io.ktor.auth.Principal
@@ -17,9 +18,9 @@ fun User.toUserDTO() = UserDTO(
     email = email,
     token = JwtConfig.makeToken(this)
 )
-fun User.toUserGraphQL(player: Player) = UserGraphQL(
+fun User.toUserGraphQL(player: Player, assets:List<ShareGraphQL>) = UserGraphQL(
     id = id,
     email = email,
     token = token,
-    assets = AssetsGraphQL(player.money)
+    assets = AssetsGraphQL(player.money, assets)
 )

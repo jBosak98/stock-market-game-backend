@@ -3,9 +3,13 @@ package com.ktor.stock.market.game.jbosak.graphQL.schema
 import arrow.core.getOrElse
 import arrow.core.valueOr
 import com.ktor.stock.market.game.jbosak.graphQL.ClientGraphQLException
+import com.ktor.stock.market.game.jbosak.graphQL.dataLoadersConfig.dataloaderResolver
+import com.ktor.stock.market.game.jbosak.graphQL.dataLoadersConfig.resolve
 import com.ktor.stock.market.game.jbosak.model.Context
 import com.ktor.stock.market.game.jbosak.model.CredentialWrapper
 import com.ktor.stock.market.game.jbosak.model.RegistrationWrapper
+import com.ktor.stock.market.game.jbosak.model.graphql.CompanyGraphQL
+import com.ktor.stock.market.game.jbosak.model.graphql.ShareGraphQL
 import com.ktor.stock.market.game.jbosak.model.toUserGraphQL
 import com.ktor.stock.market.game.jbosak.repository.PlayerRepository
 import com.ktor.stock.market.game.jbosak.repository.UserRepository
@@ -24,7 +28,13 @@ fun getUserSchema() =
             assets: Assets
         }
         type Assets {
-            money:Int
+            money:Float
+            shares:[Share]
+        }
+        type Share {
+            companyId:Int!
+            company:Company
+            amount:Int
         }
         
         input UserRegisterInput {
@@ -48,8 +58,12 @@ fun TypeRuntimeWiring.Builder.userMutationResolvers(): TypeRuntimeWiring.Builder
             val player = PlayerRepository
                 .createUser(createdUser.id)
                 ?: throw ClientGraphQLException("Player not found")
-
-            createdUser.toUserGraphQL(player)
+            val evalCompany = dataloaderResolver(env)
+                .resolve<CompanyGraphQL>("company")
+            val assets = player.assets.map {
+                ShareGraphQL(it.companyId, evalCompany(it.companyId), it.amount)
+            }
+            createdUser.toUserGraphQL(player, assets)
         })
 
 fun TypeRuntimeWiring.Builder.userQueryResolvers(): TypeRuntimeWiring.Builder =
@@ -65,7 +79,12 @@ fun TypeRuntimeWiring.Builder.userQueryResolvers(): TypeRuntimeWiring.Builder =
                 .getOrElse { PlayerRepository.createUser(user.id) }
                 ?: throw ClientGraphQLException("Player not found")
 
-            user.toUserGraphQL(player)
+            val evalCompany = dataloaderResolver(env)
+                .resolve<CompanyGraphQL>("company")
+            val assets = player.assets.map {
+                ShareGraphQL(it.companyId, evalCompany(it.companyId), it.amount)
+            }
+            user.toUserGraphQL(player,assets)
         }
         .dataFetcher("login") { env ->
             val credentials = convertToObject(env.arguments, CredentialWrapper::class.java)!!.user
@@ -75,6 +94,13 @@ fun TypeRuntimeWiring.Builder.userQueryResolvers(): TypeRuntimeWiring.Builder =
             val player = PlayerRepository
                 .findPlayer(user.id)
                 .getOrElse { throw ClientGraphQLException("Player not found") }
-            user.toUserGraphQL(player)
+
+            val evalCompany = dataloaderResolver(env)
+                .resolve<CompanyGraphQL>("company")
+
+            val assets = player.assets.map {
+                ShareGraphQL(it.companyId, evalCompany(it.companyId), it.amount)
+            }
+            user.toUserGraphQL(player, assets)
 
         }

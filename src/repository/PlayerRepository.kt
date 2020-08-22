@@ -8,6 +8,7 @@ import com.ktor.stock.market.game.jbosak.utils.MONEY_TO_START
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
 
 object PlayerRepository {
@@ -18,6 +19,14 @@ object PlayerRepository {
             it[startedAt] = DateTime.now()
         }
     }
+
+    fun updatePlayerMoney(playerId:Int, money:Float) = transaction {
+        Players.update(
+            where = { Players.id eq playerId },
+            limit = null,
+            body = { it[Players.money] = money }
+        )
+    }
     fun createUser(userId: Int): Player? {
         insert(userId)
         return findPlayer(userId).getOrElse { null }
@@ -27,7 +36,11 @@ object PlayerRepository {
         Players
             .select { Players.userId eq userId }
             .singleOrNull()
-            ?.toPlayer()
+            ?.let {
+                val id = it[Players.id]
+                val assets = TransactionRepository.getShares(id).toList()
+                it.toPlayer(assets)
+            }
             .toOption()
     }
 }

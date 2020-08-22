@@ -6,6 +6,3 @@ data class UserGraphQL(
     val token:String?,
     val assets:AssetsGraphQL
 )
-
-data class AssetsGraphQL(val money:Int)
-
