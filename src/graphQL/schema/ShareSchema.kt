@@ -73,4 +73,50 @@ fun TypeRuntimeWiring.Builder.shareMutationResolvers() =
         }
         user.toUserGraphQL(player, assets)
     })
+        .dataFetcher("sellShare", async {env ->
+            val input = convertToObject(env.arguments, BuyShareInput::class.java)!!
+            val user = env
+                .getContext<Context>()
+                .user
+                .toOption()
+                .getOrElse { throw ClientGraphQLException("Not authorized") }
+
+            val company = CompanyRepository
+                .findCompany(ticker = input.ticker)
+                .getOrElse { throw ClientGraphQLException("Wrong ticker") }
+
+            val player = PlayerRepository
+                .findPlayer(user.id)
+                .getOrElse { throw ClientGraphQLException("Player not found") }
+            val share = player
+                .assets
+                .find { it.companyId == company.id }
+                .toOption()
+                .getOrElse { throw ClientGraphQLException("User does not have this share") }
+            if(share.amount < input.amount) throw ClientGraphQLException("User does not have that much shares")
+
+            val price = QuoteRepository
+                .findQuote(company.ticker)
+                .getOrElse { throw ClientGraphQLException("Quote not found") }
+                .currentPrice
+                ?.toPrice()
+                .toOption()
+                .getOrElse { throw ClientGraphQLException("Price not found") }
+
+            val updatedMoney = player.money + price * input.amount
+            updatePlayerMoney(player.id, updatedMoney)
+            TransactionRepository.insert(
+                playerId = player.id,
+                companyId = company.id,
+                price = price,
+                quantity = input.amount,
+                type = TransactionType.DISPOSAL
+            )
+            val evalCompany = dataloaderResolver(env)
+                .resolve<CompanyGraphQL>("company")
+            val assets = player.assets.map {
+                ShareGraphQL(it.companyId, evalCompany(it.companyId), it.amount)
+            }
+            user.toUserGraphQL(player, assets)
+        })
 
