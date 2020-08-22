@@ -29,7 +29,7 @@ fun getShareShema() =
         }
     """
 
-fun TypeRuntimeWiring.Builder.shareMutationResolvers() =
+fun TypeRuntimeWiring.Builder.shareMutationResolvers(): TypeRuntimeWiring.Builder =
     this.dataFetcher("buyShare", async { env ->
         val input = convertToObject(env.arguments, BuyShareInput::class.java)!!
         val user = env
@@ -50,9 +50,9 @@ fun TypeRuntimeWiring.Builder.shareMutationResolvers() =
             .findQuote(company.ticker)
             .getOrElse { throw ClientGraphQLException("Quote not found") }
             .currentPrice
-            ?.toPrice()
             .toOption()
             .getOrElse { throw ClientGraphQLException("Price not found") }
+            .toPrice()
 
         val updatedMoney = player.money - price * input.amount
 
@@ -88,20 +88,24 @@ fun TypeRuntimeWiring.Builder.shareMutationResolvers() =
             val player = PlayerRepository
                 .findPlayer(user.id)
                 .getOrElse { throw ClientGraphQLException("Player not found") }
+
             val share = player
                 .assets
                 .find { it.companyId == company.id }
                 .toOption()
                 .getOrElse { throw ClientGraphQLException("User does not have this share") }
-            if(share.amount < input.amount) throw ClientGraphQLException("User does not have that much shares")
+
+            if(share.amount < input.amount)
+                throw ClientGraphQLException("User does not have that much shares")
 
             val price = QuoteRepository
                 .findQuote(company.ticker)
                 .getOrElse { throw ClientGraphQLException("Quote not found") }
                 .currentPrice
-                ?.toPrice()
                 .toOption()
                 .getOrElse { throw ClientGraphQLException("Price not found") }
+                .toPrice()
+
 
             val updatedMoney = player.money + price * input.amount
             updatePlayerMoney(player.id, updatedMoney)
