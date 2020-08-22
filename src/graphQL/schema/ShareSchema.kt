@@ -31,7 +31,6 @@ fun getShareShema() =
 
 fun TypeRuntimeWiring.Builder.shareMutationResolvers() =
     this.dataFetcher("buyShare", async { env ->
-        println("inspect: ${env.arguments}")
         val input = convertToObject(env.arguments, BuyShareInput::class.java)!!
         val user = env
             .getContext<Context>()
