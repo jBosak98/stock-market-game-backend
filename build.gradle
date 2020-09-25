@@ -4,12 +4,14 @@ buildscript {
     }
     
     dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:5.2.0"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
 apply plugin: 'kotlin'
 apply plugin: 'application'
+apply plugin: "com.github.johnrengelman.shadow"
 
 group 'com.ktor.stock.market.game.jbosak'
 version '0.0.1'
@@ -71,4 +73,10 @@ dependencies {
 
 test{
     useJUnitPlatform()
+}
+
+shadowJar {
+    baseName = 'my-application'
+    classifier = null
+    version = null
 }
