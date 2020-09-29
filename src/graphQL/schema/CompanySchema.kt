@@ -187,6 +187,10 @@ fun TypeRuntimeWiring.Builder.companyQueryResolvers() =
             totalCount = companiesSize(),
             companies = companies.map { evalCompany(it.ticker) }
         )
+    }).dataFetcher("getCompany", async { env ->
+        val ticker = env.arguments["ticker"] as String
+        val company = getCompany(ticker = ticker)
+        company
     })
 
 fun companyDataLoader(): DataLoader<DataLoaderKey<Any>, Any>? {

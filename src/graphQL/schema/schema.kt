@@ -17,8 +17,9 @@ fun getSchema(): GraphQLSchema {
             type Query {
                 me: User
                 login(user:UserLoginInput!): User
-                companiesConnection(skip:Int, limit:Int):CompaniesConnection
+                companiesConnection(skip:Int, limit:Int): CompaniesConnection
                 getQuote(ticker:String!): Quote
+                getCompany(ticker:String!): Company
 
             }
     
