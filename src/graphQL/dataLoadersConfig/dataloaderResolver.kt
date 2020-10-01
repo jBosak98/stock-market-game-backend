@@ -29,14 +29,14 @@ inline fun <reified T, K> DataLoaderKey<K>.resolve(resolverName: String): (Any) 
 
 fun dataloaderResolver(
     env: DataFetchingEnvironment,
-    selectedField: List<String>? = null
+    selectedField: List<String>? = null,
+    methodName: String = ""
 ): Map<String, Pair<DataLoader<Any, Any>, (Any?) -> DataLoaderKey<Any?>>> {
     val allSelectedField = selectedField
         .toOption()
         .getOrElse { env.selectionSet.get().keySet().filterNotNull() }
-
+        .map { if(methodName != "") "$methodName/$it" else it } + methodName
     val splitBySlash = { value: String -> value.split("/") }
-
     return allSelectedField
         .map { keyPath ->
             val key = splitBySlash(keyPath).last()
