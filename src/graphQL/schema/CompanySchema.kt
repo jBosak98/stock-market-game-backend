@@ -189,7 +189,10 @@ fun TypeRuntimeWiring.Builder.companyQueryResolvers() =
         )
     }).dataFetcher("getCompany", async { env ->
         val ticker = env.arguments["ticker"] as String
-        val company = getCompany(ticker = ticker)
+        val resolvers =
+            dataloaderResolver(env = env,methodName = "getCompany")
+        val evalCompany = resolvers.resolve<CompanyGraphQL>("getCompany")
+        val company = evalCompany(ticker)
         company
     })
 

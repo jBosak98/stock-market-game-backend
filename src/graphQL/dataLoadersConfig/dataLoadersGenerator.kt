@@ -14,3 +14,4 @@ fun generateDataLoaders(): DataLoaderRegistry =
         .register("company", companyDataLoader())
         .register("companies", companyDataLoader())
         .register("quote", quoteDataLoader())
+        .register("getCompany", companyDataLoader())
