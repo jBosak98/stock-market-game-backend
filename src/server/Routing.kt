@@ -13,7 +13,6 @@ import graphql.execution.AsyncExecutionStrategy
 import graphql.execution.AsyncSerialExecutionStrategy
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
-import io.ktor.auth.authenticate
 import io.ktor.auth.authentication
 import io.ktor.http.ContentType
 import io.ktor.response.respondText
@@ -25,7 +24,7 @@ import ktor.graphql.graphQL
 
 fun Routing.setup() {
     authRoute()
-    authenticate(optional = true) {
+//    authenticate(optional = true) {
         get("/") {
             call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
         }
@@ -54,7 +53,7 @@ fun Routing.setup() {
             )
 
         }
-    }
+//    }
 }
 
 fun getContext(call: ApplicationCall): Context = Context(call.authentication.principal as User?)
