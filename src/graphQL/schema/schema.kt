@@ -13,6 +13,7 @@ fun getSchema(): GraphQLSchema {
             ${getCompanySchema()}
             ${getQuoteSchema()}
             ${getShareShema()}
+            ${getTransactionSchema()}
             
             type Query {
                 me: User
@@ -20,6 +21,7 @@ fun getSchema(): GraphQLSchema {
                 companiesConnection(skip:Int, limit:Int): CompaniesConnection
                 getQuote(ticker:String!): Quote
                 getCompany(ticker:String!): Company
+                getTransactions : [Transaction!]!
 
             }
     
@@ -40,6 +42,7 @@ fun getSchema(): GraphQLSchema {
                 .userQueryResolvers()
                 .companyQueryResolvers()
                 .quoteQueryResolvers()
+                .transactionQueryResolvers()
         }
         .type("Mutation") { builder ->
             builder
