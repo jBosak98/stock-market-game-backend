@@ -33,14 +33,17 @@ object TransactionRepository {
         return Share(transaction.companyId, amount)
     }
     fun getShares(playerId:Int) = transaction {
-        Transactions
-            .select { Transactions.playerId eq playerId }
-            .map(ResultRow::toTransaction)
+        findPlayerTransactions(playerId)
             .fold(emptyArray<Share>()) {shares,transaction ->
                 val oldShares = shares.find { it.companyId == transaction.companyId }
                 shares
                     .filter { it.companyId != transaction.companyId }
                     .toTypedArray() + evaluateTransaction(transaction, oldShares)
             }
+    }
+    fun findPlayerTransactions(playerId: Int) = transaction {
+        Transactions
+            .select { Transactions.playerId eq playerId }
+            .map(ResultRow::toTransaction)
     }
 }
