@@ -18,6 +18,6 @@ fun initDB() {
         SchemaUtils.create(Quotes)
         SchemaUtils.create(Players)
         SchemaUtils.create(Transactions)
-        SchemaUtils.create(Candle)
+        SchemaUtils.create(Candles)
     }
 }

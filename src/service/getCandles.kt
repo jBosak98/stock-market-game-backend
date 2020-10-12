@@ -21,19 +21,19 @@ fun getCandles(ticker:String): List<SingleCandle> {
     val candles = CandleRepository.find(ticker, res, from, to)
     val isValid = when(res){
         CandlesResolution.ONE_MINUTE ->
-            Minutes.minutesBetween(from, to).size() == candles.size
+            Minutes.minutesBetween(from, to).minutes == candles.size
         CandlesResolution.FIVE_MINUTES ->
-            Minutes.minutesBetween(from, to).size() == candles.size * 5
+            Minutes.minutesBetween(from, to).minutes == candles.size * 5
         CandlesResolution.FIFTEEN_MINUTES ->
-            Minutes.minutesBetween(from, to).size() == candles.size * 15
+            Minutes.minutesBetween(from, to).minutes == candles.size * 15
         CandlesResolution.THIRTY_MINUTES ->
-            Minutes.minutesBetween(from, to).size() == candles.size * 30
+            Minutes.minutesBetween(from, to).minutes == candles.size * 30
         CandlesResolution.ONE_DAY ->
-            Days.daysBetween(from, to).size() == candles.size
+            Days.daysBetween(from, to).days == candles.size
         CandlesResolution.ONE_WEEK ->
-            Days.daysBetween(from, to).size() == candles.size * 7
+            Days.daysBetween(from, to).days == candles.size * 7
         CandlesResolution.ONE_MONTH ->
-            Months.monthsBetween(from, to).size() == candles.size
+            Months.monthsBetween(from, to).months == candles.size
     }
     return if(isValid) candles
     else refetch(ticker, res, from, to)

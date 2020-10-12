@@ -14,6 +14,7 @@ fun getSchema(): GraphQLSchema {
             ${getQuoteSchema()}
             ${getShareShema()}
             ${getTransactionSchema()}
+            ${getCandleSchema()}
             
             type Query {
                 me: User
@@ -21,7 +22,8 @@ fun getSchema(): GraphQLSchema {
                 companiesConnection(skip:Int, limit:Int): CompaniesConnection
                 getQuote(ticker:String!): Quote
                 getCompany(ticker:String!): Company
-                getTransactions : [Transaction!]!
+                getTransactions: [Transaction!]!
+                getCandles(ticker:String!, from:String!, to:String, resolution:String!):[Candle!]!
 
             }
     
@@ -43,6 +45,7 @@ fun getSchema(): GraphQLSchema {
                 .companyQueryResolvers()
                 .quoteQueryResolvers()
                 .transactionQueryResolvers()
+                .candleQueryResolvers()
         }
         .type("Mutation") { builder ->
             builder
