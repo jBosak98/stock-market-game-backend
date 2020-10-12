@@ -7,11 +7,6 @@ import com.ktor.stock.market.game.jbosak.model.Company
 import com.ktor.stock.market.game.jbosak.model.getCompanyMetrics
 import com.ktor.stock.market.game.jbosak.repository.CompanyRepository
 
-//import com.intrinio.api.CompanyApi
-//import com.intrinio.invoker.ApiException
-//import com.intrinio.models.ApiResponseCompanies
-
-//import org.threeten.bp.LocalDate
 
 fun getCompanies(skip: Int, limit: Int): List<Company> {
 
