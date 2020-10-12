@@ -5,6 +5,16 @@ import com.ktor.stock.market.game.jbosak.model.*
 import com.ktor.stock.market.game.jbosak.model.db.*
 import org.jetbrains.exposed.sql.ResultRow
 
+fun ResultRow.toSingleCandle() = SingleCandle(
+    openPrice = this[Candles.openPrice]!!,
+    highPrice = this[Candles.highPrice]!!,
+    lowPrice = this[Candles.lowPrice]!!,
+    closePrice = this[Candles.closePrice]!!,
+    volume = this[Candles.volume]!!,
+    time = this[Candles.time]!!
+)
+
+
 fun ResultRow.toUser() = User(
     id = this[Users.id],
     email = this[Users.name],

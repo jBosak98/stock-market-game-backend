@@ -4,7 +4,7 @@ import com.finnhub.api.models.StockCandles
 import org.joda.time.DateTime
 
 fun StockCandles.toCandle() =
-    Candles(
+    CandlesContainer(
         openPrices = o,
         highPrices = h,
         lowPrices= l,
