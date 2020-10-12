@@ -7,3 +7,5 @@ fun DateTime.isInLast5Minutes() =
         .now()
         .minusMinutes(5)
         .let { fiveMinAgo -> this.isAfter(fiveMinAgo) }
+
+fun DateTime.toUnixTime() = this.millis / 1000
