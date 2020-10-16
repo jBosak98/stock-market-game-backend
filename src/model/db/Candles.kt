@@ -10,6 +10,6 @@ object Candles: Table(){
     val lowPrice = float("low_price").nullable()
     val closePrice = float("close_price").nullable()
     val volume = float("volume").nullable()
-    val time = date("timestamp").nullable()
+    val time = datetime("timestamp").nullable()
     val resolution = text("resolution")
 }

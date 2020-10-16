@@ -12,13 +12,9 @@ import org.joda.time.Minutes
 import org.joda.time.Months
 
 
-fun getCandles(ticker:String): List<SingleCandle> {
-    val res = CandlesResolution.ONE_MONTH
-    val now = DateTime.now()
-    val from = now.minusYears(1)
-    val to = now
-
-    val candles = CandleRepository.find(ticker, res, from, to)
+fun getCandles(ticker:String, res:CandlesResolution, from:DateTime, to:DateTime?): List<SingleCandle> {
+    val toDate = to?: DateTime.now()
+    val candles = CandleRepository.find(ticker, res, from, toDate)
     val isValid = when(res){
         CandlesResolution.ONE_MINUTE ->
             Minutes.minutesBetween(from, to).minutes == candles.size
@@ -36,7 +32,7 @@ fun getCandles(ticker:String): List<SingleCandle> {
             Months.monthsBetween(from, to).months == candles.size
     }
     return if(isValid) candles
-    else refetch(ticker, res, from, to)
+    else refetch(ticker, res, from, toDate)
 }
 
 
