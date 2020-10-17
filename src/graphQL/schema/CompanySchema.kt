@@ -9,7 +9,6 @@ import com.ktor.stock.market.game.jbosak.model.graphql.CompaniesConnectionGraphQ
 import com.ktor.stock.market.game.jbosak.model.graphql.CompanyGraphQL
 import com.ktor.stock.market.game.jbosak.model.toGraphQL
 import com.ktor.stock.market.game.jbosak.repository.CompanyRepository.companiesSize
-import com.ktor.stock.market.game.jbosak.service.getCandles
 import com.ktor.stock.market.game.jbosak.service.getCompanies
 import com.ktor.stock.market.game.jbosak.service.getCompany
 import com.ktor.stock.market.game.jbosak.utils.convertToObject
@@ -183,8 +182,6 @@ fun TypeRuntimeWiring.Builder.companyQueryResolvers() =
         val resolvers =
             dataloaderResolver(env)
         val evalCompany = resolvers.resolve<CompanyGraphQL>("companies")
-        println("HERE")
-        getCandles("AAPL")
         CompaniesConnectionGraphQL(
             totalCount = companiesSize(),
             companies = companies.map { evalCompany(it.ticker) }
