@@ -23,11 +23,12 @@ fun TypeRuntimeWiring.Builder.candleQueryResolvers() =
     this.dataFetcher("getCandles", async { env->
         val ticker = env.arguments["ticker"] as String
         val fromString = env.arguments["from"] as String
+        val toString = env.arguments["to"] as String
         val from =
             if (isValidDateTime(fromString)) DateTime.parse(fromString)
             else DateTime.now().minusYears(2)
         val to =
-            if (isValidDateTime(fromString))  DateTime.parse(fromString)
+            if (isValidDateTime(fromString))  DateTime.parse(toString)
             else DateTime.now()
 
         val resolution = env.arguments["resolution"] as String
