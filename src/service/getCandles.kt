@@ -31,6 +31,7 @@ fun getCandles(ticker:String, res:CandlesResolution, from:DateTime, to:DateTime?
         CandlesResolution.ONE_MONTH ->
             Months.monthsBetween(from, to).months == candles.size
     }
+
     return if(isValid) candles
     else refetch(ticker, res, from, toDate)
 }
@@ -50,6 +51,7 @@ private fun refetch(
             to = to.toUnixTime(),
             adjusted = true.toString()
         ).toCandle()
-    CandleRepository.insert(candles,ticker,res)
+
+    CandleRepository.upsert(candles,ticker,res)
     return  CandleRepository.find(ticker, res,from)
 }

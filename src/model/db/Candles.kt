@@ -1,5 +1,6 @@
 package com.ktor.stock.market.game.jbosak.model.db
 
+import com.ktor.stock.market.game.jbosak.utils.uniqueIndexR
 import org.jetbrains.exposed.sql.Table
 
 object Candles: Table(){
@@ -12,4 +13,7 @@ object Candles: Table(){
     val volume = float("volume").nullable()
     val time = datetime("timestamp").nullable()
     val resolution = text("resolution")
+    init {
+        uniqueIndexR("uniqueCandle", companyId, time, resolution)
+    }
 }

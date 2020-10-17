@@ -7,9 +7,10 @@ import com.ktor.stock.market.game.jbosak.model.CandlesResolution
 import com.ktor.stock.market.game.jbosak.model.SingleCandle
 import com.ktor.stock.market.game.jbosak.model.db.Candles
 import com.ktor.stock.market.game.jbosak.model.toSingleCandles
+import com.ktor.stock.market.game.jbosak.utils.uniqueIndexR
+import com.ktor.stock.market.game.jbosak.utils.upsert
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.statements.InsertStatement
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -17,14 +18,21 @@ import org.joda.time.DateTime
 
 
 object CandleRepository {
-    fun insert(candles: CandlesContainer, ticker:String, resolution:CandlesResolution) = transaction {
+    fun upsert(candles: CandlesContainer, ticker:String, resolution:CandlesResolution) = transaction {
         val companyId = CompanyRepository
             .findCompany(ticker = ticker)
             .getOrElse { throw Exception("Company not found") }
             .id
+        val conflictIndex = Candles.uniqueIndexR("uniqueCandle",
+            Candles.companyId,
+            Candles.time,
+            Candles.resolution
+        )
         candles
             .toSingleCandles()
-            .map { Candles.insert(assignCandle(it, resolution, companyId)) }
+            .map {
+                Candles.upsert( conflictIndex = conflictIndex, body = assignCandle(it, resolution, companyId))
+            }
 
     }
 
