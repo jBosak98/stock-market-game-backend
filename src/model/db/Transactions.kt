@@ -10,6 +10,6 @@ object Transactions: Table() {
     val companyId = integer("company_id") references Companies.id
     val pricePerShare = float("price_per_share")
     val quantity = integer("quantity")
-    val createdAt = date("created_at")
+    val createdAt = datetime("created_at")
     val type = enumeration("type", TransactionType::class)
 }

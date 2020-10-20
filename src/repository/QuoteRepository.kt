@@ -45,6 +45,7 @@ object QuoteRepository {
         it[Quotes.currentPrice] = quote.c
         it[Quotes.previousClosePrice] = quote.pc
         it[Quotes.dailyChange] = getDailyChange(quote)
+        it[Quotes.dailyChangePercentage] = getDailyChange(quote)?.div(quote.pc!!)
         it[Quotes.date] = DateTime.now()
     }
 }

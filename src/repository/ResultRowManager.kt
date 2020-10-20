@@ -51,6 +51,7 @@ fun ResultRow.toQuote() = Quote(
     currentPrice = this[Quotes.currentPrice],
     previousClosePrice = this[Quotes.previousClosePrice],
     dailyChange = this[Quotes.dailyChange],
+    dailyChangePercentage = this[Quotes.dailyChangePercentage],
     date = this[Quotes.date]
 )
 

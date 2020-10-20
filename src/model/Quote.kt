@@ -11,5 +11,6 @@ data class Quote(
     val currentPrice: Float?,
     val previousClosePrice: Float?,
     val dailyChange:Float?,
+    val dailyChangePercentage:Float?,
     val date:DateTime
 )

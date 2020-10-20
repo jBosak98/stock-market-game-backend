@@ -20,6 +20,7 @@ fun getQuoteSchema() =
             currentPrice:Float
             previousClosePrice:Float
             dailyChange:Float
+            dailyChangePercentage:Float
             date: String!
         }
     """
