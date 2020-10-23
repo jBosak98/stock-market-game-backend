@@ -7,6 +7,7 @@ import com.ktor.stock.market.game.jbosak.graphQL.dataLoadersConfig.dataloaderRes
 import com.ktor.stock.market.game.jbosak.graphQL.dataLoadersConfig.resolve
 import com.ktor.stock.market.game.jbosak.model.Context
 import com.ktor.stock.market.game.jbosak.model.TransactionType
+import com.ktor.stock.market.game.jbosak.model.graphql.AssetsGraphQL
 import com.ktor.stock.market.game.jbosak.model.graphql.BuyShareInput
 import com.ktor.stock.market.game.jbosak.model.graphql.CompanyGraphQL
 import com.ktor.stock.market.game.jbosak.model.graphql.ShareGraphQL
@@ -66,12 +67,12 @@ fun TypeRuntimeWiring.Builder.shareMutationResolvers(): TypeRuntimeWiring.Builde
             quantity = input.amount,
             type = TransactionType.PURCHASE
         )
-        val evalCompany = dataloaderResolver(env)
-            .resolve<CompanyGraphQL>("company")
-        val assets = player.assets.map {
-            ShareGraphQL(it.companyId, evalCompany(it.companyId), it.amount)
-        }
-        user.toUserGraphQL(player, assets)
+
+        val assetsQL =
+            dataloaderResolver(env)
+                .resolve<AssetsGraphQL>("assets")(user.id)
+
+        assetsQL?.let { user.toUserGraphQL(it) }
     })
         .dataFetcher("sellShare", async {env ->
             val input = convertToObject(env.arguments, BuyShareInput::class.java)!!
@@ -116,11 +117,12 @@ fun TypeRuntimeWiring.Builder.shareMutationResolvers(): TypeRuntimeWiring.Builde
                 quantity = input.amount,
                 type = TransactionType.DISPOSAL
             )
-            val evalCompany = dataloaderResolver(env)
-                .resolve<CompanyGraphQL>("company")
-            val assets = player.assets.map {
-                ShareGraphQL(it.companyId, evalCompany(it.companyId), it.amount)
-            }
-            user.toUserGraphQL(player, assets)
+
+            val assetsQL =
+                dataloaderResolver(env)
+                    .resolve<AssetsGraphQL>("assets")(user.id)
+
+
+            assetsQL?.let { user.toUserGraphQL(it) }
         })
 
