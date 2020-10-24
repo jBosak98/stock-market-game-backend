@@ -1,7 +1,9 @@
 package com.ktor.stock.market.game.jbosak.utils
 
 import org.joda.time.DateTime
+import org.joda.time.Duration
 import org.joda.time.format.DateTimeFormat
+import kotlin.math.roundToInt
 
 fun DateTime.isInLast5Minutes() =
     DateTime
@@ -17,3 +19,6 @@ fun isValidDateTime(time:String) = try {
 }catch (e:Exception){
     false
 }
+
+fun DateTime.roundDown(d: Duration): DateTime =
+    this.minus(this.millis - (this.millis.toDouble() / d.millis).roundToInt() * d.millis)
