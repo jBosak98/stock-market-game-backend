@@ -1,6 +1,9 @@
 package com.ktor.stock.market.game.jbosak.service
 
 import arrow.core.toOption
+import com.google.common.collect.Range
+import com.google.common.collect.RangeSet
+import com.google.common.collect.TreeRangeSet
 import com.ktor.stock.market.game.jbosak.model.CandleInfo
 import com.ktor.stock.market.game.jbosak.model.CandleIntervals
 import com.ktor.stock.market.game.jbosak.model.CandlesResolution
@@ -21,38 +24,22 @@ object CandleCache : Cache<String, CandleInfo> {
     }
     fun update(key:String, interval: Interval, resolution: CandlesResolution){
         val cacheInfo = cache[key].toOption()
+        val intervals = Range.closed(interval.startMillis,interval.endMillis)
+        val set = TreeRangeSet.create<Long>()
+        set.add(intervals)
         if(cacheInfo.isEmpty()){
-            cache[key] = CandleInfo(key, mutableListOf(CandleIntervals(resolution,mutableListOf(interval))))
+            cache[key] = CandleInfo(key, mutableListOf(CandleIntervals(resolution,set)))
         }else {
             val candleInterval = cache[key]!!
                 .candleIntervals
                 .find { it.resolution == resolution }
             if(candleInterval.toOption().isEmpty())
-                cache[key]!!.candleIntervals.add(CandleIntervals(resolution, mutableListOf(interval)))
+                cache[key]!!.candleIntervals.add(CandleIntervals(resolution, set))
             else
-                candleInterval!!.intervals = mergeOverlappedIntervals(candleInterval.intervals + interval)
+                candleInterval!!.intervals.add(intervals)
 
         }
     }
-    private fun mergeOverlappedIntervals(intervals: List<Interval>): List<Interval> =
-        intervals
-            .sortedBy { it.start }
-            .fold(Stack()){ acc: Stack<Interval>, interval ->
-                if (acc.isEmpty()) acc.apply { push(interval) }
-                else {
-                    val top = acc.peek()
-                    when {
-                        top.end < interval.start ->
-                            acc.apply { push(interval) }
-                        top.end < interval.end -> acc.apply {
-                            val newTop = Interval(top.start,interval.end)
-                            pop()
-                            push(newTop)
-                        }
-                        else -> acc
-                    }
-                }
-            }
 
     override fun remove(key: String) = this.cache.remove(key)
 
