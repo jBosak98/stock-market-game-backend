@@ -61,6 +61,7 @@ fun TypeRuntimeWiring.Builder.userMutationResolvers(): TypeRuntimeWiring.Builder
                 throw ClientGraphQLException("user exists")
 
             val createdUser = AuthService.register(user).valueOr { throw it }
+            PlayerRepository.createUser(createdUser.id)
 
             val assetsQL =
                 dataloaderResolver(env)
