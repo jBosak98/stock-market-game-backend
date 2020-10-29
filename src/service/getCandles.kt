@@ -47,8 +47,11 @@ fun getCandles(ticker:String, res:CandlesResolution, from:DateTime, to:DateTime?
         .pipe { if(it.isAfterNow) DateTime.now() else it }
         .pipe { roundDateTimeByResolution(it, res) }
 
-    val neededRange = Range.closed(from.millis, toDate.millis)
-
+    val neededRange =
+        Range.closed(
+            normalizeFromTime(from, res).millis,
+            normalizeToTime(toDate, res).millis
+        )
     return checkCache(neededRange,ticker, res)
         .map { CandleRepository.find(ticker, res, from, toDate) }
         .getOrHandle {
@@ -103,17 +106,15 @@ private fun refetch(
     to:DateTime
 ) {
 
-    val normalizedFrom = normalizeFromTime(from, res)
-    val normalizedTo = normalizeToTime(to, res)
     val candles = DefaultApi()
         .stockCandles(
             symbol = ticker,
             resolution = res.resolution,
-            from = normalizedFrom.toUnixTime(),
-            to = normalizedTo.toUnixTime(),
+            from = from.toUnixTime(),
+            to = to.toUnixTime(),
             adjusted = true.toString()
         ).toCandle()
-    val interval = Interval(normalizedFrom, normalizedTo)
+    val interval = Interval(from, to)
     CandleCache.update(ticker,interval,res)
     CandleRepository.upsert(candles,ticker,res)
 

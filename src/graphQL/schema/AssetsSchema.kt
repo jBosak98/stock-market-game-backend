@@ -11,6 +11,7 @@ import com.ktor.stock.market.game.jbosak.model.graphql.CompanyGraphQL
 import com.ktor.stock.market.game.jbosak.model.graphql.ShareGraphQL
 import com.ktor.stock.market.game.jbosak.model.toGraphQL
 import com.ktor.stock.market.game.jbosak.repository.PlayerRepository
+import com.ktor.stock.market.game.jbosak.repository.TransactionRepository
 import com.ktor.stock.market.game.jbosak.service.getCompany
 import com.ktor.stock.market.game.jbosak.service.getQuote
 import org.dataloader.BatchLoader
@@ -26,10 +27,12 @@ private fun handleCompany(dataLoaderKey: DataLoaderKey<*>): (Int) -> CompanyGrap
                 if(company?.quote.toOption().isDefined()) company
                 else {
                     val simpleCompany = getCompany(id = companyId)
-                    val quote = simpleCompany?.ticker?.let { it1 ->
-                        getQuote(it1)
-                            .valueOr { throwable -> throw throwable }
-                    }
+                    val quote = simpleCompany
+                        ?.ticker
+                        ?.let { it1 ->
+                            getQuote(it1)
+                                .valueOr { throwable -> throw throwable }
+                        }
                     simpleCompany?.toGraphQL(quote)
                 }
             }
@@ -56,8 +59,19 @@ fun assetsDataLoader(): DataLoader<DataLoaderKey<Int>, AssetsGraphQL> {
                 val evalCompany = handleCompany(it)
                 val assets = player.assets.map { share ->
                     val company = evalCompany(share.companyId)
-                    ShareGraphQL(share.companyId, company, share.amount)
+                    val gain = company
+                        ?.quote
+                        ?.currentPrice
+                        ?.let { currentPrice ->
+                            share
+                                .totalValue
+                                ?.minus(currentPrice * share.amount)
+                                ?.div(share.totalValue)
+                                ?.times(100)
+                        }
+                    ShareGraphQL(share.companyId, company, share.amount, gain)
                 }
+
                 val accountValue = player.money + sumAssetsValue(assets)
                 AssetsGraphQL(
                     player.money,
