@@ -67,6 +67,7 @@ fun assetsDataLoader(): DataLoader<DataLoaderKey<Int>, AssetsGraphQL> {
                                 .totalValue
                                 ?.minus(currentPrice * share.amount)
                                 ?.div(share.totalValue)
+                                ?.times(100)
                         }
                     ShareGraphQL(share.companyId, company, share.amount, gain)
                 }
