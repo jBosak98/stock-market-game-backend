@@ -22,16 +22,27 @@ object TransactionRepository {
             it[Transactions.type] = type
         }
     }
+
     private fun evaluateTransaction(transaction:Transaction,share: Share?): Share {
-        if(share.toOption().isEmpty()) return Share(transaction.companyId,transaction.quantity)
+        val totalTransactionValue = (transaction.pricePerShare * transaction.quantity)
+            .let { if(transaction.type === TransactionType.DISPOSAL) it.times(-1) else it }
+
+        if(share.toOption().isEmpty()) return Share(
+            transaction.companyId,
+            transaction.quantity,
+            totalTransactionValue
+        )
         if(transaction.companyId != share!!.companyId) return share
 
         val amount = when (transaction.type) {
             TransactionType.PURCHASE -> share.amount + transaction.quantity
             TransactionType.DISPOSAL -> share.amount - transaction.quantity
         }
-        return Share(transaction.companyId, amount)
+        val totalValue = totalTransactionValue.plus(share.totalValue?:0f)
+
+        return Share(transaction.companyId, amount, totalValue)
     }
+
     fun getShares(playerId:Int) = transaction {
         findPlayerTransactions(playerId)
             .fold(emptyArray<Share>()) {shares,transaction ->
