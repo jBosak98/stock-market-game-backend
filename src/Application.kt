@@ -29,7 +29,7 @@ fun Application.module(testing: Boolean = false) {
     install(DefaultHeaders)
 
     install(ForwardedHeaderSupport)
-    install(Authentication) { setup() }
+    install(Authentication) { setup(secretKey) }
 
     install(ContentNegotiation) { gson() }
 
@@ -40,4 +40,10 @@ val Application.finnhubKey get()
     = environment
         .config
         .property("ktor.deployment.finnhubKey")
+        .getString()
+@KtorExperimentalAPI
+val Application.secretKey get()
+= environment
+        .config
+        .property("ktor.deployment.secretKey")
         .getString()

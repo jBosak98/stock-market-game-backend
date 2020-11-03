@@ -4,10 +4,11 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import com.ktor.stock.market.game.jbosak.model.User
+import io.ktor.application.Application
 import java.util.*
 
 object JwtConfig {
-    private const val secret = "zAP5MBA4B4Ijz0MZaS48"
+    lateinit var secret:String
     private const val issuer = "ktor.io"
     private const val validityInMs = 36_000_00 * 10 // 10 hours
     private val algorithm = Algorithm.HMAC512(secret)
