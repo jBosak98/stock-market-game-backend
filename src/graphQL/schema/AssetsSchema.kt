@@ -59,17 +59,25 @@ fun assetsDataLoader(): DataLoader<DataLoaderKey<Int>, AssetsGraphQL> {
                 val evalCompany = handleCompany(it)
                 val assets = player.assets.map { share ->
                     val company = evalCompany(share.companyId)
-                    val gain = company
+                    val totalGain = company
                         ?.quote
                         ?.currentPrice
                         ?.let { currentPrice ->
                             share
                                 .totalValue
                                 ?.minus(currentPrice * share.amount)
-                                ?.div(share.totalValue)
-                                ?.times(100)
                         }
-                    ShareGraphQL(share.companyId, company, share.amount, gain)
+                    val totalGainPercentage = share
+                        .totalValue
+                        ?.let { shareTotalValue -> totalGain?.div(shareTotalValue)?.times(100) }
+
+                    ShareGraphQL(
+                        share.companyId,
+                        company,
+                        share.amount,
+                        totalGain,
+                        totalGainPercentage
+                    )
                 }
 
                 val accountValue = player.money + sumAssetsValue(assets)

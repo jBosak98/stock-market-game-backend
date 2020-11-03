@@ -42,6 +42,7 @@ fun getUserSchema() =
             company:Company
             amount:Int
             totalGain:Float
+            totalGainPercentage:Float
         }
         
         input UserRegisterInput {

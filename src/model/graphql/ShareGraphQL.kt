@@ -5,5 +5,6 @@ data class ShareGraphQL(
     val companyId:Int,
     val company:CompanyGraphQL?,
     val amount:Int,
-    val totalGain:Float?
+    val totalGain:Float?,
+    val totalGainPercentage:Float?
 )

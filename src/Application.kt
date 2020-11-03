@@ -1,5 +1,6 @@
 package com.ktor.stock.market.game.jbosak
 
+import com.ktor.stock.market.game.jbosak.server.JwtConfig
 import com.ktor.stock.market.game.jbosak.server.initDB
 import com.ktor.stock.market.game.jbosak.server.initExternalApi
 import com.ktor.stock.market.game.jbosak.server.setup
@@ -21,6 +22,10 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
+    globalSecretKey = environment
+        .config
+        .property("ktor.deployment.secretKey")
+        .getString()
     initDB()
     initExternalApi(finnhubKey)
 
@@ -29,7 +34,7 @@ fun Application.module(testing: Boolean = false) {
     install(DefaultHeaders)
 
     install(ForwardedHeaderSupport)
-    install(Authentication) { setup(secretKey) }
+    install(Authentication) { setup() }
 
     install(ContentNegotiation) { gson() }
 
@@ -41,9 +46,5 @@ val Application.finnhubKey get()
         .config
         .property("ktor.deployment.finnhubKey")
         .getString()
-@KtorExperimentalAPI
-val Application.secretKey get()
-= environment
-        .config
-        .property("ktor.deployment.secretKey")
-        .getString()
+
+var globalSecretKey:String? = null
