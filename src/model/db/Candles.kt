@@ -5,11 +5,11 @@ import org.jetbrains.exposed.sql.Table
 
 object Candles: Table(){
     val id = integer("id").uniqueIndex().primaryKey().autoIncrement()
-    val companyId = integer("company_id") references Companies.id
-    val openPrice = float("open_price").nullable()
-    val highPrice = float("high_price").nullable()
-    val lowPrice = float("low_price").nullable()
-    val closePrice = float("close_price").nullable()
+    val companyId = integer("companyId") references Companies.id
+    val openPrice = float("openPrice").nullable()
+    val highPrice = float("highPrice").nullable()
+    val lowPrice = float("lowPrice").nullable()
+    val closePrice = float("closePrice").nullable()
     val volume = float("volume").nullable()
     val time = datetime("timestamp").nullable()
     val resolution = text("resolution")

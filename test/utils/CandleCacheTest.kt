@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test
 
 internal class CandleCacheTest {
 
-//    @Test
-//    fun update() {
+    @Test
+    fun update() {
 //        CandleCache.update("AAPL",
 //            Interval(
 //                DateTime(2020,1,1,1,1)
@@ -55,5 +55,5 @@ internal class CandleCacheTest {
 ////        assert(CandleCache["AAPL"]!!.candleIntervals[0].intervals.size == 1)
 ////        assert(CandleCache["AAPL"]!!.candleIntervals[0].intervals[0].start.toDateTime() == DateTime(2020,1,1,1,1))
 ////        assert(CandleCache["AAPL"]!!.candleIntervals[0].intervals[0].end.toDateTime() == DateTime(2020,1,8,1,1))
-//    }
+    }
 }

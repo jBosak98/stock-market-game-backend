@@ -39,11 +39,11 @@ object QuoteRepository {
 
     private fun <T> assignQuote(quote: Quote, companyId: Int):T.(InsertStatement<Number>) -> Unit = {
         it[Quotes.companyId] = companyId
-        it[Quotes.openDayPrice] = quote.o
-        it[Quotes.highDayPrice] = quote.h
-        it[Quotes.lowDayPrice] = quote.l
+//        it[Quotes.openDayPrice] = quote.o
+//        it[Quotes.highDayPrice] = quote.h
+//        it[Quotes.lowDayPrice] = quote.l
         it[Quotes.currentPrice] = quote.c
-        it[Quotes.previousClosePrice] = quote.pc
+//        it[Quotes.previousClosePrice] = quote.pc
         it[Quotes.dailyChange] = getDailyChange(quote)
         it[Quotes.dailyChangePercentage] = getDailyChange(quote)?.div(quote.pc!!)?.times(100)
         it[Quotes.date] = DateTime.now()

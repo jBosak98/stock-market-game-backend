@@ -16,7 +16,7 @@ object TransactionRepository {
         Transactions.insert {
             it[Transactions.playerId] = playerId
             it[Transactions.companyId] = companyId
-            it[Transactions.pricePerShare] = price
+//            it[Transactions.pricePerShare] = price
             it[Transactions.quantity] = quantity
             it[Transactions.createdAt] = DateTime.now()
             it[Transactions.type] = type

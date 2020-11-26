@@ -5,7 +5,7 @@ import org.jetbrains.exposed.sql.Table
 object Players: Table(){
     val id = integer("id").uniqueIndex().primaryKey().autoIncrement()
     val money = float("money")
-    val userId = integer("user_id") references Users.id
-    val startedAt = date("started_at")
-    val removedAt = date("removed_at").nullable()
+    val userId = integer("userId") references Users.id
+    val startedAt = date("startedAt")
+    val removedAt = date("removedAt").nullable()
 }

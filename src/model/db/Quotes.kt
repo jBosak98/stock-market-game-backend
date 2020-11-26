@@ -4,13 +4,13 @@ import org.jetbrains.exposed.sql.Table
 
 object Quotes: Table(){
     val id = integer("id").primaryKey().autoIncrement()
-    val companyId = integer("company_id") references Companies.id
-    val openDayPrice = float("open_day_price").nullable()
-    val highDayPrice = float("high_day_price").nullable()
-    val lowDayPrice = float("low_day_price").nullable()
-    val currentPrice = float("current_price").nullable()
-    val previousClosePrice = float("previous_close_price").nullable()
-    val dailyChange = float("daily_change").nullable()
-    val dailyChangePercentage = float("daily_change_percentage").nullable()
+    val companyId = integer("companyId") references Companies.id
+//    val openDayPrice = float("open_day_price").nullable()
+//    val highDayPrice = float("high_day_price").nullable()
+//    val lowDayPrice = float("low_day_price").nullable()
+    val currentPrice = float("currentPrice").nullable()
+//    val previousClosePrice = float("previous_close_price").nullable()
+    val dailyChange = float("dailyChange").nullable()
+    val dailyChangePercentage = float("dailyChangePercentage").nullable()
     val date = datetime("date")
 }

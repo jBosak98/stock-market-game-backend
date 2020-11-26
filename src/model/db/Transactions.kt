@@ -6,10 +6,11 @@ import org.jetbrains.exposed.sql.Table
 
 object Transactions: Table() {
     val id = integer("id").uniqueIndex().primaryKey().autoIncrement()
-    val playerId = integer("player_id") references Players.id
-    val companyId = integer("company_id") references Companies.id
-    val pricePerShare = float("price_per_share")
+    val playerId = integer("playerId") references Players.id
+    val companyId = integer("companyId") references Companies.id
+    val quoteId = integer("quoteId") references Quotes.id
+//    val pricePerShare = float("price_per_share")
     val quantity = integer("quantity")
-    val createdAt = datetime("created_at")
+    val createdAt = datetime("createdAt")
     val type = enumeration("type", TransactionType::class)
 }
