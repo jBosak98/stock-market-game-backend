@@ -2,7 +2,7 @@ package com.ktor.stock.market.game.jbosak.model.db
 
 import org.jetbrains.exposed.sql.Table
 
-object Companies : Table() {
+object Companies : Table("Companies") {
     val id = integer("id").uniqueIndex().primaryKey().autoIncrement()
     //company profile
     val country = text("country").nullable()

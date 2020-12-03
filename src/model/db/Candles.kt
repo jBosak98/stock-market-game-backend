@@ -3,7 +3,7 @@ package com.ktor.stock.market.game.jbosak.model.db
 import com.ktor.stock.market.game.jbosak.utils.uniqueIndexR
 import org.jetbrains.exposed.sql.Table
 
-object Candles: Table(){
+object Candles: Table("Candles"){
     val id = integer("id").uniqueIndex().primaryKey().autoIncrement()
     val companyId = integer("companyId") references Companies.id
     val openPrice = float("openPrice").nullable()

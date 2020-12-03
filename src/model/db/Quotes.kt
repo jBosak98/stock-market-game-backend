@@ -2,7 +2,7 @@ package com.ktor.stock.market.game.jbosak.model.db
 
 import org.jetbrains.exposed.sql.Table
 
-object Quotes: Table(){
+object Quotes: Table("Quotes"){
     val id = integer("id").primaryKey().autoIncrement()
     val companyId = integer("companyId") references Companies.id
 //    val openDayPrice = float("open_day_price").nullable()

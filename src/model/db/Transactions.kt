@@ -4,7 +4,7 @@ import com.ktor.stock.market.game.jbosak.model.TransactionType
 import org.jetbrains.exposed.sql.Table
 
 
-object Transactions: Table() {
+object Transactions: Table("Transactions") {
     val id = integer("id").uniqueIndex().primaryKey().autoIncrement()
     val playerId = integer("playerId") references Players.id
     val companyId = integer("companyId") references Companies.id
