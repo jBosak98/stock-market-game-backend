@@ -66,6 +66,7 @@ fun assetsDataLoader(): DataLoader<DataLoaderKey<Int>, AssetsGraphQL> {
                             share
                                 .totalValue
                                 ?.minus(currentPrice * share.amount)
+				?.times(-1)
                         }
                     val totalGainPercentage = share
                         .totalValue
