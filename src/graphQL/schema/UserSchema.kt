@@ -96,7 +96,7 @@ fun TypeRuntimeWiring.Builder.userQueryResolvers(): TypeRuntimeWiring.Builder =
                 dataloaderResolver(env)
                     .resolve<AssetsGraphQL>("assets")(user.id)
 
-            assetsQL?.let { user.toUserGraphQL(it) }
+            user.toUserGraphQL(assetsQL)
 
         }
 

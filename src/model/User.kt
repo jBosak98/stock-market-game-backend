@@ -18,7 +18,7 @@ fun User.toUserDTO() = UserDTO(
     email = email,
     token = JwtConfig.makeToken(this)
 )
-fun User.toUserGraphQL(assets:AssetsGraphQL) = UserGraphQL(
+fun User.toUserGraphQL(assets:AssetsGraphQL?) = UserGraphQL(
     id = id,
     email = email,
     token = token,
