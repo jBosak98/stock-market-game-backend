@@ -29,8 +29,8 @@ fun getSchema(): GraphQLSchema {
     
             type Mutation {
                 register(user: UserRegisterInput!): User
-                buyShare(ticker: String!, amount: Int!): User
-                sellShare(ticker: String!, amount: Int!): User
+                buyShare(ticker: String!, amount: Int!, price: Float): User
+                sellShare(ticker: String!, amount: Int!, price: Float): User
             }
             schema {
                 query: Query

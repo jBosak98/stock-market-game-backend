@@ -27,6 +27,7 @@ fun getShareShema() =
        input BuyShareInput {
             ticker:String!
             amount: Int!
+            price: Float
         }
     """
 
@@ -47,13 +48,20 @@ fun TypeRuntimeWiring.Builder.shareMutationResolvers(): TypeRuntimeWiring.Builde
             .findCompany(ticker = input.ticker)
             .getOrElse { throw ClientGraphQLException("Wrong ticker") }
 
-        val price = QuoteRepository
-            .findQuote(company.ticker)
-            .getOrElse { throw ClientGraphQLException("Quote not found") }
-            .currentPrice
+        val findPrice = {
+            QuoteRepository
+                .findQuote(company.ticker)
+                .getOrElse { throw ClientGraphQLException("Quote not found") }
+                .currentPrice
+                .toOption()
+                .getOrElse { throw ClientGraphQLException("Price not found") }
+                .toPrice()
+        }
+        val price = input
+            .price
             .toOption()
-            .getOrElse { throw ClientGraphQLException("Price not found") }
-            .toPrice()
+            .getOrElse(findPrice)
+
 
         val updatedMoney = player.money - price * input.amount
 
@@ -90,22 +98,20 @@ fun TypeRuntimeWiring.Builder.shareMutationResolvers(): TypeRuntimeWiring.Builde
                 .findPlayer(user.id)
                 .getOrElse { throw ClientGraphQLException("Player not found") }
 
-            val share = player
-                .assets
-                .find { it.companyId == company.id }
-                .toOption()
-                .getOrElse { throw ClientGraphQLException("User does not have this share") }
 
-            if(share.amount < input.amount)
-                throw ClientGraphQLException("User does not have that much shares")
-
-            val price = QuoteRepository
-                .findQuote(company.ticker)
-                .getOrElse { throw ClientGraphQLException("Quote not found") }
-                .currentPrice
+            val findPrice = {
+                QuoteRepository
+                    .findQuote(company.ticker)
+                    .getOrElse { throw ClientGraphQLException("Quote not found") }
+                    .currentPrice
+                    .toOption()
+                    .getOrElse { throw ClientGraphQLException("Price not found") }
+                    .toPrice()
+            }
+            val price = input
+                .price
                 .toOption()
-                .getOrElse { throw ClientGraphQLException("Price not found") }
-                .toPrice()
+                .getOrElse(findPrice)
 
 
             val updatedMoney = player.money + price * input.amount
