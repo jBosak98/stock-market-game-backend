@@ -28,8 +28,8 @@ object AuthService {
     }
 
     fun register(details: RegistrationDetails): Validated<ClientGraphQLException,User> = details.let { (email, password) ->
-        validatePasswordLength(password)?.let { return Validated.Invalid(it) }
-        validateEmail(email)?.let { return Validated.Invalid(it) }
+//        validatePasswordLength(password)?.let { return Validated.Invalid(it) }
+//        validateEmail(email)?.let { return Validated.Invalid(it) }
 
         val hashed = BcryptHasher.hashPassword(password)
         val id = UserRepository.insert(details.copy(password = hashed))
