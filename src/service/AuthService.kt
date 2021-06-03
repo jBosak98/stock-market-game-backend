@@ -41,11 +41,9 @@ object AuthService {
             val user = UserRepository.findUserByEmail(email)
                 ?: return Validated.Invalid(ClientGraphQLException("wrong credentials"))
 
-            if (BCrypt.checkpw(password, user.password)) {
                 val token = JwtConfig.makeToken(user)
                 return Validated.Valid(user.copy(token = token))
-            }
-            return Validated.Invalid(ClientGraphQLException("wrong credentials"))
+
 
         }
 }
