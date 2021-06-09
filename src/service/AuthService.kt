@@ -31,8 +31,8 @@ object AuthService {
 //        validatePasswordLength(password)?.let { return Validated.Invalid(it) }
 //        validateEmail(email)?.let { return Validated.Invalid(it) }
 
-        val hashed = BcryptHasher.hashPassword(password)
-        val id = UserRepository.insert(details.copy(password = hashed))
+//        val hashed = BcryptHasher.hashPassword(password)
+        val id = UserRepository.insert(details.copy(password = password))
         return Validated.Valid(User(id, email, "", null))
     }
 
