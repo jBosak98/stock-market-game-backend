@@ -5,6 +5,7 @@ import com.ktor.stock.market.game.jbosak.graphQL.ClientGraphQLException
 import com.ktor.stock.market.game.jbosak.model.LoginCredentials
 import com.ktor.stock.market.game.jbosak.model.RegistrationDetails
 import com.ktor.stock.market.game.jbosak.model.User
+import com.ktor.stock.market.game.jbosak.model.db.Users.password
 import com.ktor.stock.market.game.jbosak.repository.UserRepository
 import com.ktor.stock.market.game.jbosak.server.JwtConfig
 import com.ktor.stock.market.game.jbosak.utils.BcryptHasher
@@ -13,8 +14,12 @@ import org.mindrot.jbcrypt.BCrypt
 object AuthService {
 
     private fun validatePasswordLength(password:String):ClientGraphQLException? =
-        if(password.length < 6)
-            ClientGraphQLException("Password is too short")
+        if(password.length < 8
+            || password.toLowerCase() === password
+            || password.toUpperCase() !== password
+            || !password.any { it.isDigit() }
+        )
+            ClientGraphQLException("Password is too weak")
         else
             null
 
@@ -49,3 +54,4 @@ object AuthService {
 
         }
 }
+
