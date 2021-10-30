@@ -22,9 +22,11 @@ import io.ktor.routing.get
 import ktor.graphql.Config
 import ktor.graphql.fromRequest
 import ktor.graphql.graphQL
+import rabbit
 
 fun Routing.setup() {
     authRoute()
+    rabbit()
     authenticate(optional = true) {
         get("/") {
             call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
@@ -56,6 +58,8 @@ fun Routing.setup() {
         }
     }
 }
+
+
 
 fun getContext(call: ApplicationCall): Context = Context(call.authentication.principal as User?)
 
