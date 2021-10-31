@@ -34,11 +34,9 @@ object CandleRepository {
                 Candles.upsert( conflictIndex = conflictIndex, body = assignCandle(it, resolution, companyId))
             }
     }
-    fun upsert(candles: List<SingleCandle>, ticker:String, resolution:CandlesResolution) = transaction {
-        val companyId = CompanyRepository
-            .findCompany(ticker = ticker)
-            .getOrElse { throw Exception("Company $ticker not found") }
-            .id
+
+
+    fun upsert(candles: List<SingleCandle>, resolution:CandlesResolution, companyId:Int) = transaction {
         val conflictIndex = Candles.uniqueIndexR("uniqueCandle",
             Candles.companyId,
             Candles.time,
