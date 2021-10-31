@@ -1,8 +1,10 @@
 import arrow.core.getOrElse
+import com.finnhub.api.models.Quote
 import com.google.gson.GsonBuilder
 import com.ktor.stock.market.game.jbosak.model.CandlesResolution
 import com.ktor.stock.market.game.jbosak.repository.CandleRepository
 import com.ktor.stock.market.game.jbosak.repository.CompanyRepository
+import com.ktor.stock.market.game.jbosak.repository.QuoteRepository
 import com.ktor.stock.market.game.jbosak.service.rabbitConnectionFactory
 import com.ktor.stock.market.game.jbosak.utils.dateTimeConverter
 import com.rabbitmq.client.CancelCallback
@@ -17,7 +19,7 @@ val deliverCallback = DeliverCallback { consumerTag: String?, message: Delivery?
         val gson = GsonBuilder().registerTypeAdapter(DateTime::class.java,dateTimeConverter).create()
         val response = gson.fromJson<DataFetcherReponse>(messageBodyString, DataFetcherReponse::class.java)
         val ticker = response.ticker.toUpperCase()
-        val candles = response.candles
+        val candles = response.candles.toList()
         val companyId = CompanyRepository
             .findCompany(ticker = ticker)
             .getOrElse {
@@ -28,7 +30,20 @@ val deliverCallback = DeliverCallback { consumerTag: String?, message: Delivery?
             }
             .id
 
-        CandleRepository.upsert(candles.toList(),CandlesResolution.FIFTEEN_MINUTES, companyId)
+        val quote = candles.last().let { lastCandle ->
+            val previousDayClose = candles.findLast {
+                it.time.withTimeAtStartOfDay().millis == lastCandle.time.minusDays(1).withTimeAtStartOfDay().millis
+            }?.closePrice
+            Quote(
+                o=lastCandle.openPrice,
+                h=lastCandle.highPrice,
+                l=lastCandle.lowPrice,
+                c=lastCandle.closePrice,
+                pc=previousDayClose
+            )
+        }
+        QuoteRepository.insert(quote, companyId)
+        CandleRepository.upsert(candles,CandlesResolution.FIFTEEN_MINUTES, companyId)
 }
 
 fun rabbit() {
