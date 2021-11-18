@@ -16,7 +16,7 @@ object AuthService {
     private fun validatePasswordLength(password:String):ClientGraphQLException? =
         if(password.length < 8
             || password.toLowerCase() === password
-            || password.toUpperCase() !== password
+            || password.toUpperCase() === password
             || !password.any { it.isDigit() }
         )
             ClientGraphQLException("Password is too weak")
