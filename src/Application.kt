@@ -1,6 +1,5 @@
 package com.ktor.stock.market.game.jbosak
 
-import com.ktor.stock.market.game.jbosak.server.JwtConfig
 import com.ktor.stock.market.game.jbosak.server.initDB
 import com.ktor.stock.market.game.jbosak.server.initExternalApi
 import com.ktor.stock.market.game.jbosak.server.setup
