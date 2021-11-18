@@ -44,7 +44,7 @@ private fun refetch(skip: Int, limit: Int): List<Company> {
 
 
 suspend fun refetchCompanyInfo(ticker:String, domain:String, port:String): Company? {
-    val url = "${domain}:${port}/info/ticker/${ticker.toLowerCase()}"
+    val url = "http://${domain}:${port}/info/ticker/${ticker.toLowerCase()}"
 
     val companyInfo = HttpClient { install(JsonFeature) }
         .use { it.get<TickerInfoResponse>(url) }

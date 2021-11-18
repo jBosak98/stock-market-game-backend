@@ -26,9 +26,9 @@ fun Application.module(testing: Boolean = false) {
         .property("ktor.deployment.secretKey")
         .getString()
     initDB()
-    initExternalApi(finnhubKey, infoProviderHost, "8050")
-
     install(CORS) { setup() }
+
+    initExternalApi(finnhubKey, infoProviderHost, "8050")
 
     install(DefaultHeaders)
 
