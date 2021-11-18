@@ -72,6 +72,8 @@ dependencies {
 
     //rabbit
     implementation 'com.rabbitmq:amqp-client:5.13.1'
+    implementation "io.ktor:ktor-client-serialization:$ktor_version"
+    implementation "io.ktor:ktor-client-gson:$ktor_version"
 }
 
 test{
