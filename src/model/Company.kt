@@ -15,7 +15,8 @@ data class Company(
     val shareOutstanding: Float?,
     val weburl: String?,
     val logo: String?,
-    val finnhubIndustry: String?
+    val finnhubIndustry: String?,
+    val businessSummary: String?
 )
 
 
@@ -34,6 +35,7 @@ fun Company.toGraphQL( quote: Quote?) =
         shareOutstanding = this.shareOutstanding,
         weburl = this.weburl,
         logo = this.logo,
+        businessSummary = this.businessSummary,
         finnhubIndustry = this.finnhubIndustry,
         quote = quote
     )

@@ -17,6 +17,7 @@ data class CompanyGraphQL(
     val shareOutstanding: Float?,
     val weburl: String?,
     val logo: String?,
-    val finnhubIndustry: String?
+    val finnhubIndustry: String?,
+    val businessSummary: String?
 
 )

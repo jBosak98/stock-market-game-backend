@@ -36,6 +36,7 @@ fun getCompanySchema() =
         finnhubIndustry: String
         financials: CompanyFinancials
         quote:Quote
+        businessSummary: String
     }
     type CompanyFinancials {
       tenDayAverageTradingVolume:Float

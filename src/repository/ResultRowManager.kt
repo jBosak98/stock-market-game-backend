@@ -68,6 +68,7 @@ fun ResultRow.toCompany() = Company(
     weburl = this[Companies.weburl],
     logo = this[Companies.logo],
     finnhubIndustry = this[Companies.finnhubIndustry],
+    businessSummary = this[Companies.businessSummary],
     financials = this.toCompanyFinancials()
 )
 

@@ -26,7 +26,7 @@ fun Application.module(testing: Boolean = false) {
         .property("ktor.deployment.secretKey")
         .getString()
     initDB()
-    initExternalApi(finnhubKey)
+    initExternalApi(finnhubKey, infoProviderHost, "8050")
 
     install(CORS) { setup() }
 
@@ -36,14 +36,23 @@ fun Application.module(testing: Boolean = false) {
     install(Authentication) { setup() }
 
     install(ContentNegotiation) { gson() }
-
-    install(Routing) { setup() }
+    val rabbitHost = environment.config.property("ktor.deployment.rabbitHost").getString()
+    val infoProviderHost = environment.config.property("ktor.deployment.infoProviderHost").getString()
+    install(Routing) { setup(rabbitHost) }
 }
+
 @KtorExperimentalAPI
 val Application.finnhubKey get()
     = environment
         .config
         .property("ktor.deployment.finnhubKey")
+        .getString()
+@KtorExperimentalAPI
+
+val Application.infoProviderHost get()
+    = environment
+        .config
+        .property("ktor.deployment.infoProviderHost")
         .getString()
 
 var globalSecretKey:String? = null

@@ -3,10 +3,20 @@ package com.ktor.stock.market.game.jbosak.service
 import arrow.core.getOrElse
 import arrow.core.toOption
 import com.finnhub.api.apis.DefaultApi
+import com.google.gson.annotations.SerializedName
 import com.ktor.stock.market.game.jbosak.model.Company
+import com.ktor.stock.market.game.jbosak.model.TickerInfoResponse
 import com.ktor.stock.market.game.jbosak.model.getCompanyMetrics
 import com.ktor.stock.market.game.jbosak.repository.CompanyRepository
-
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.request.*
+import io.ktor.http.ContentType.Application.Json
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import io.ktor.client.features.json.*
+import io.ktor.server.engine.*
 
 fun getCompanies(skip: Int, limit: Int): List<Company> {
 
@@ -32,51 +42,12 @@ private fun refetch(skip: Int, limit: Int): List<Company> {
     return CompanyRepository.findCompanies(skip, limit)
 }
 
-fun refetchCompanyFinancials(ticker:String): Company? {
-    DefaultApi()
-        .companyBasicFinancials(ticker, "all")
-        .getCompanyMetrics()
-        .toOption()
-        .map {
-            CompanyRepository.insertCompanyFinancials(ticker,it)
-        }
+
+suspend fun refetchCompanyInfo(ticker:String, domain:String, port:String): Company? {
+    val url = "${domain}:${port}/info/ticker/${ticker.toLowerCase()}"
+
+    val companyInfo = HttpClient { install(JsonFeature) }
+        .use { it.get<TickerInfoResponse>(url) }
+    CompanyRepository.insertComapnyInfo(ticker, companyInfo)
     return getCompany(ticker = ticker)
 }
-fun refetchCompanyProfile(ticker:String):Company? {
-    DefaultApi()
-        .companyProfile2(symbol = ticker, isin = null, cusip = null)
-        .let {
-            CompanyRepository.insertCompanyProfile(ticker, it)
-        }
-    return getCompany(ticker = ticker)
-}
-//
-//private fun fetchCompanies(
-//    latestFilingDate: LocalDate,
-//    sic: String? = null,
-//    template: String? = null,
-//    sector: String? = null,
-//    industryCategory: String? = null,
-//    industryGroup: String? = null,
-//    hasFundamentals: Boolean = true,
-//    hasStockProces: Boolean = true
-//): ApiResponseCompanies? {
-//    val api = CompanyApi()
-//    return try {
-//        val result = api.getAllCompanies(
-//            latestFilingDate,
-//            sic,
-//            template,
-//            sector,
-//            industryCategory,
-//            industryGroup,
-//            hasFundamentals,
-//            hasStockProces,
-//            100,
-//            null
-//        )
-//        result
-//    } catch (e: ApiException) {
-//        null
-//    }
-//}

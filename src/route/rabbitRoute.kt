@@ -46,8 +46,8 @@ val deliverCallback = DeliverCallback { consumerTag: String?, message: Delivery?
         CandleRepository.upsert(candles,CandlesResolution.FIFTEEN_MINUTES, companyId)
 }
 
-fun rabbit() {
-    val channel = rabbitConnectionFactory.newConnection().createChannel()
+fun rabbit(rabbitHost:String) {
+    val channel = rabbitConnectionFactory(rabbitHost).newConnection().createChannel()
 
     val cancelCallback = CancelCallback{consumerTag: String? ->
         println("[Rabbit] - Cancelled... $consumerTag")

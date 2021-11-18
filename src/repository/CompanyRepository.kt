@@ -6,6 +6,7 @@ import arrow.core.toOption
 import com.finnhub.api.models.CompanyProfile2
 import com.ktor.stock.market.game.jbosak.model.Company
 import com.ktor.stock.market.game.jbosak.model.CompanyFinancials
+import com.ktor.stock.market.game.jbosak.model.TickerInfoResponse
 import com.ktor.stock.market.game.jbosak.model.db.Companies
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.InsertStatement
@@ -30,6 +31,14 @@ object CompanyRepository {
             where = { Companies.ticker eq ticker },
             limit = null,
             body = assignCompanyProfile(companyProfile)
+        )
+    }
+
+    fun insertComapnyInfo(ticker: String, companyInfo: TickerInfoResponse) = transaction {
+        Companies.update (
+            where = { Companies.ticker eq ticker },
+            limit = null,
+            body = assignCompanyInfo(companyInfo)
         )
     }
 
@@ -67,6 +76,31 @@ object CompanyRepository {
             .selectAll()
             .limit(limit, skip)
             .map(ResultRow::toCompany)
+    }
+
+    private fun <T> assignCompanyInfo(companyInfo: TickerInfoResponse): T.(UpdateStatement) -> Unit = {
+        it[Companies.country] = companyInfo.country
+        it[Companies.currency] = companyInfo.currency
+        it[Companies.exchange] = companyInfo.exchange
+        it[Companies.ipo] = companyInfo.ipo
+        it[Companies.name] = companyInfo.name
+        it[Companies.phone] = companyInfo.phone
+        it[Companies.shareOutstanding] = companyInfo.sharesOutstanding
+        it[Companies.weburl] = companyInfo.website
+        it[Companies.logo] = companyInfo.logo
+        it[Companies.finnhubIndustry] = companyInfo.industry
+        it[Companies.fiftyTwoWeekLow] = companyInfo.fiftyTwoWeekLow
+        it[Companies.beta] = companyInfo.beta
+        it[Companies.bookValuePerShareAnnual] = companyInfo.bookValuePerShareAnnual
+        it[Companies.bookValuePerShareQuarterly] = companyInfo.bookValuePerShareQuarterly
+        it[Companies.bookValueShareGrowth5Y] = companyInfo.bookValueShareGrowth5Y
+        it[Companies.dividendPerShareAnnual] = companyInfo.dividendPerShareAnnual
+        it[Companies.epsGrowth5Y] = companyInfo.epsGrowth5Y
+        it[Companies.marketCapitalization] = companyInfo.marketCapitalization
+        it[Companies.epsNormalizedAnnual] = companyInfo.epsNormalizedAnnual
+        it[Companies.totalDebtOverTotalEquityQuarterly] = companyInfo.totalDebtOverTotalEquityQuarterly
+        it[Companies.businessSummary] = companyInfo.business_summary
+
     }
 
     private fun <T> assignCompanyProfile(companyProfile: CompanyProfile2): T.(UpdateStatement) -> Unit = {

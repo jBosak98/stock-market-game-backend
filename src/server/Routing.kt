@@ -24,9 +24,9 @@ import ktor.graphql.fromRequest
 import ktor.graphql.graphQL
 import rabbit
 
-fun Routing.setup() {
+fun Routing.setup(rabbitHost:String) {
     authRoute()
-    rabbit()
+    rabbit(rabbitHost)
     authenticate(optional = true) {
         get("/") {
             call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)

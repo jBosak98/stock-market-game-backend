@@ -16,6 +16,7 @@ object Companies : Table() {
     val weburl = text("weburl").nullable()
     val logo = text("logo").nullable()
     val finnhubIndustry = text("finnhubIndustry").nullable()
+    val businessSummary = text("businessSummary").nullable()
 
 
     //financials
