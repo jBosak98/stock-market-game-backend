@@ -36,9 +36,6 @@ fun getCompany(id: Int? = null, externalId: String? = null, ticker: String? = nu
 val excludedCompanies = arrayOf("1337.HK")
 
 private fun refetch(skip: Int, limit: Int): List<Company> {
-    val companies = DefaultApi().companyPeers("AAPL")
-        .filter { excludedCompanies.contains(it).not() }
-    if (companies.isNotEmpty()) CompanyRepository.insertMany(companies)
     return CompanyRepository.findCompanies(skip, limit)
 }
 
