@@ -38,7 +38,8 @@ fun Application.module(testing: Boolean = false) {
     install(ContentNegotiation) { gson() }
     val rabbitHost = environment.config.property("ktor.deployment.rabbitHost").getString()
     val infoProviderHost = environment.config.property("ktor.deployment.infoProviderHost").getString()
-    install(Routing) { setup(rabbitHost) }
+    install(Routing) { setup(environment
+        .config) }
 }
 
 @KtorExperimentalAPI

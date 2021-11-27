@@ -1,12 +1,13 @@
 package com.ktor.stock.market.game.jbosak.model
 
+import com.google.gson.annotations.SerializedName
 import org.joda.time.DateTime
 
 data class SingleCandle(
-    val openPrice:Float,
-    val highPrice:Float,
-    val lowPrice:Float,
-    val closePrice:Float,
-    val volume:Float,
-    val time: DateTime
+    @SerializedName("openPrice") val openPrice:Float,
+    @SerializedName("highPrice") val highPrice:Float,
+    @SerializedName("lowPrice") val lowPrice:Float,
+    @SerializedName("closePrice") val closePrice:Float,
+    @SerializedName("volume") val volume:Float,
+    @SerializedName("time") val time: DateTime
 )

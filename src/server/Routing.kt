@@ -15,6 +15,7 @@ import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.auth.authenticate
 import io.ktor.auth.authentication
+import io.ktor.config.*
 import io.ktor.http.ContentType
 import io.ktor.response.respondText
 import io.ktor.routing.Routing
@@ -24,9 +25,9 @@ import ktor.graphql.fromRequest
 import ktor.graphql.graphQL
 import rabbit
 
-fun Routing.setup(rabbitHost:String) {
+fun Routing.setup(config:ApplicationConfig) {
     authRoute()
-    rabbit(rabbitHost)
+    rabbit(config)
     authenticate(optional = true) {
         get("/") {
             call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
