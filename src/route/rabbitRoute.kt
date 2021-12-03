@@ -3,12 +3,17 @@ import com.finnhub.api.models.Quote
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.ktor.stock.market.game.jbosak.model.CandlesResolution
+import com.ktor.stock.market.game.jbosak.model.DataPrediction
+import com.ktor.stock.market.game.jbosak.model.DataPredictionCandle
 import com.ktor.stock.market.game.jbosak.repository.CandleRepository
 import com.ktor.stock.market.game.jbosak.repository.CompanyRepository
 import com.ktor.stock.market.game.jbosak.repository.QuoteRepository
 import com.ktor.stock.market.game.jbosak.service.rabbitConnectionFactory
 import com.ktor.stock.market.game.jbosak.utils.dateTimeConverter
-import com.rabbitmq.client.*
+import com.rabbitmq.client.CancelCallback
+import com.rabbitmq.client.Channel
+import com.rabbitmq.client.DeliverCallback
+import com.rabbitmq.client.Delivery
 import io.ktor.config.*
 import io.ktor.util.*
 import org.joda.time.DateTime
@@ -51,9 +56,11 @@ fun deliverCallback(config: ApplicationConfig, channel: Channel): DeliverCallbac
         val predictionRoutingKey = config.property("ktor.deployment.predictionExchangeRoutingKey").getString()
         val defaultExchange = ""
         val weekAgoDate = DateTime.now().minusWeeks(1)
-        val data = CandleRepository.find(ticker, CandlesResolution.FIFTEEN_MINUTES, weekAgoDate)
-
-        val byteData = Gson().toJson(data).toByteArray()
+        val data = CandleRepository.find(ticker, CandlesResolution.FIFTEEN_MINUTES, weekAgoDate).map {
+            DataPredictionCandle(it.openPrice, it.highPrice, it.lowPrice, it.closePrice, it.volume, it.time.toString())
+        }
+        val dataPrediction = DataPrediction(ticker,data)
+        val byteData = Gson().toJson(dataPrediction).toByteArray()
 
         channel
             .basicPublish(defaultExchange, predictionRoutingKey, null, byteData)
