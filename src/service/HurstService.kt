@@ -10,6 +10,11 @@ fun getHurst(ticker:String): Hurst? {
     val redisClient = RedisFactory.newClient(StringCodec.UTF8)
     val plainHurst = redisClient.get(ticker)
 
-    val hurstWrapped = Gson().fromJson<HurstWrapper>(plainHurst, HurstWrapper::class.java)
-    return hurstWrapped.hurst
+    try {
+        val hurstWrapped = Gson().fromJson(plainHurst, HurstWrapper::class.java)
+        return hurstWrapped.hurst
+    }catch (e:Exception){
+    }
+
+    return null
 }
