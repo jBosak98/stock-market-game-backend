@@ -70,9 +70,11 @@ fun deliverCallback(config: ApplicationConfig, channel: Channel): DeliverCallbac
 @OptIn(KtorExperimentalAPI::class)
 fun rabbit(config:ApplicationConfig) {
     val rabbitHost = config.property("ktor.deployment.rabbitHost").getString()
+    val predictionRoutingKey = config.property("ktor.deployment.predictionExchangeRoutingKey").getString()
+
 
     val channel = rabbitConnectionFactory(rabbitHost).newConnection().createChannel()
-    channel.queueDeclare("prediction", true, false, false, emptyMap())
+    channel.queueDeclare(predictionRoutingKey, true, false, false, emptyMap())
     val cancelCallback = CancelCallback{consumerTag: String? ->
         println("[Rabbit] - Cancelled... $consumerTag")
     }

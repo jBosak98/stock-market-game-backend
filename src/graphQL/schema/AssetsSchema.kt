@@ -13,6 +13,7 @@ import com.ktor.stock.market.game.jbosak.model.toGraphQL
 import com.ktor.stock.market.game.jbosak.repository.PlayerRepository
 import com.ktor.stock.market.game.jbosak.repository.TransactionRepository
 import com.ktor.stock.market.game.jbosak.service.getCompany
+import com.ktor.stock.market.game.jbosak.service.getHurst
 import com.ktor.stock.market.game.jbosak.service.getQuote
 import org.dataloader.BatchLoader
 import org.dataloader.DataLoader
@@ -33,7 +34,8 @@ private fun handleCompany(dataLoaderKey: DataLoaderKey<*>): (Int) -> CompanyGrap
                             getQuote(it1)
                                 .valueOr { throwable -> throw throwable }
                         }
-                    simpleCompany?.toGraphQL(quote)
+                    val companyHurst = simpleCompany?.ticker?.let { getHurst(it) }
+                    simpleCompany?.toGraphQL(quote, companyHurst)
                 }
             }
     }

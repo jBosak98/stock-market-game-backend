@@ -1,10 +1,10 @@
 package com.ktor.stock.market.game.jbosak
 
+import cn.zenliu.ktor.redis.RedisFactory
 import com.ktor.stock.market.game.jbosak.server.initDB
 import com.ktor.stock.market.game.jbosak.server.initExternalApi
 import com.ktor.stock.market.game.jbosak.server.setup
-import io.ktor.application.Application
-import io.ktor.application.install
+import io.ktor.application.*
 import io.ktor.auth.Authentication
 import io.ktor.features.CORS
 import io.ktor.features.ContentNegotiation
@@ -36,10 +36,27 @@ fun Application.module(testing: Boolean = false) {
     install(Authentication) { setup() }
 
     install(ContentNegotiation) { gson() }
-    val rabbitHost = environment.config.property("ktor.deployment.rabbitHost").getString()
-    val infoProviderHost = environment.config.property("ktor.deployment.infoProviderHost").getString()
-    install(Routing) { setup(environment
-        .config) }
+    install(Routing) { setup(environment.config) }
+
+    install(RedisFactory){
+        url=getRedisUrl(environment)
+    }
+}
+
+fun getRedisUrl(environment:ApplicationEnvironment): String {
+    val redisPassword = environment
+        .config
+        .property("ktor.deployment.redisPassword")
+        .getString()
+    val redisHost = environment
+        .config
+        .property("ktor.deployment.redisHost")
+        .getString()
+    val redisPort = environment
+        .config
+        .property("ktor.deployment.redisPort")
+        .getString()
+    return "redis://${redisPassword}@${redisHost}:${redisPort}/0?timeout=10s"
 }
 
 @KtorExperimentalAPI

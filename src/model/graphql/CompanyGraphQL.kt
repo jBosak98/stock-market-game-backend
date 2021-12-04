@@ -18,6 +18,9 @@ data class CompanyGraphQL(
     val weburl: String?,
     val logo: String?,
     val finnhubIndustry: String?,
-    val businessSummary: String?
-
+    val businessSummary: String?,
+    val hurstDailyOpen: Float?,
+    val hurstDailyClose: Float?,
+    val hurstWeeklyOpen: Float?,
+    val hurstWeeklyClose: Float?
 )

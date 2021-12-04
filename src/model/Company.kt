@@ -21,7 +21,7 @@ data class Company(
 
 
 
-fun Company.toGraphQL( quote: Quote?) =
+fun Company.toGraphQL(quote: Quote?, hurst: Hurst?) =
     CompanyGraphQL(
         id = this.id,
         ticker = this.ticker,
@@ -37,5 +37,9 @@ fun Company.toGraphQL( quote: Quote?) =
         logo = this.logo,
         businessSummary = this.businessSummary,
         finnhubIndustry = this.finnhubIndustry,
+        hurstDailyOpen = hurst?.openPrice?.day,
+        hurstDailyClose = hurst?.closePrice?.day,
+        hurstWeeklyOpen = hurst?.openPrice?.week,
+        hurstWeeklyClose = hurst?.closePrice?.week,
         quote = quote
     )

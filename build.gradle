@@ -29,6 +29,7 @@ repositories {
     mavenCentral()
     jcenter()
     maven { url 'https://kotlin.bintray.com/ktor' }
+    maven { url 'https://jitpack.io' }
     flatDir {
         dirs 'lib'
     }
@@ -74,6 +75,10 @@ dependencies {
     implementation 'com.rabbitmq:amqp-client:5.13.1'
     implementation "io.ktor:ktor-client-serialization:$ktor_version"
     implementation "io.ktor:ktor-client-gson:$ktor_version"
+
+    // redis
+    implementation 'com.github.ZenLiuCN:ktor_redis:v0.0.1'
+    implementation 'io.lettuce:lettuce-core:6.1.5.RELEASE'
 }
 
 test{

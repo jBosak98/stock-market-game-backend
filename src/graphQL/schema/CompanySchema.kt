@@ -11,6 +11,7 @@ import com.ktor.stock.market.game.jbosak.model.toGraphQL
 import com.ktor.stock.market.game.jbosak.repository.CompanyRepository.companiesSize
 import com.ktor.stock.market.game.jbosak.service.getCompanies
 import com.ktor.stock.market.game.jbosak.service.getCompany
+import com.ktor.stock.market.game.jbosak.service.getHurst
 import com.ktor.stock.market.game.jbosak.utils.convertToObject
 import graphql.schema.AsyncDataFetcher.async
 import graphql.schema.idl.TypeRuntimeWiring
@@ -37,6 +38,10 @@ fun getCompanySchema() =
         financials: CompanyFinancials
         quote:Quote
         businessSummary: String
+        hurstDailyOpen: Float
+        hurstDailyClose: Float
+        hurstWeeklyOpen: Float
+        hurstWeeklyClose: Float
     }
     type CompanyFinancials {
       tenDayAverageTradingVolume:Float
@@ -208,7 +213,9 @@ fun companyDataLoader(): DataLoader<DataLoaderKey<Any>, Any>? {
 
                 val quote =
                     it.resolve<Quote, Any>("quote")(company.ticker)
-                company.toGraphQL(quote)
+                val companyHurst = company?.ticker?.let { getHurst(it) }
+
+                company.toGraphQL(quote, companyHurst)
             }
         }
     }
